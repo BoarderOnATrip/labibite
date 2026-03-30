@@ -1,6 +1,7 @@
-const CACHE_NAME = 'petit-monde-v1';
+const CACHE_NAME = 'labibite-v2';
 const CORE_ASSETS = [
   './',
+  './index.html',
   './petit-monde-v3.html',
   './manifest.json',
   './icon-bubble.svg',

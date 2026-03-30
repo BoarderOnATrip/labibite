@@ -1,8 +1,8 @@
 {
-  "name": "Petit Monde",
-  "short_name": "Petit Monde",
-  "description": "Prends soin de ton Bébête et apprends le français en jouant.",
-  "start_url": "./petit-monde-v3.html",
+  "name": "La Bibite — Petit Monde",
+  "short_name": "La Bibite",
+  "description": "Prends soin de ton Bibit et apprends le français en jouant.",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
