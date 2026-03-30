@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Petit Monde</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Nunito',sans-serif;}
+
+:root{
+  --warm-bg:#FEF6EE;--warm-bg2:#FFF0E0;
+  --sky1:#D4EEFF;--sky2:#B8E0FF;
+  --grass:#C5E8B0;--grass2:#A8D98A;
+  --coral:#FF6B6B;--mint:#4ECDC4;--gold:#FFD93D;--lav:#A78BFA;--peach:#FFB4A2;
+  --pink:#FFB6C1;--blue:#89CFF0;--green:#81C784;
+  --dark:#2D2740;--mid:#5C5470;--light:#9B93AB;--white:#FFF;
+  --shadow:0 4px 16px rgba(45,39,64,0.1);
+  --shadow-lg:0 8px 32px rgba(45,39,64,0.16);
+}
+
+#game{width:100%;height:100%;position:relative;overflow:hidden;background:var(--warm-bg);}
+
+/* ===== SCREENS ===== */
+.scr{display:none;width:100%;height:100%;position:absolute;top:0;left:0;flex-direction:column;}
+.scr.on{display:flex;}
+
+/* ===== MAIN CARE SCREEN ===== */
+#care{background:linear-gradient(180deg,var(--sky1) 0%,var(--sky2) 35%,var(--warm-bg) 35.5%,var(--warm-bg2) 100%);}
+
+/* Clouds */
+.cloud{position:absolute;background:rgba(255,255,255,0.7);border-radius:50px;height:28px;}
+.cloud.c1{width:80px;top:5%;left:10%;animation:drift 20s linear infinite;}
+.cloud.c2{width:60px;top:10%;left:55%;animation:drift 25s linear infinite;animation-delay:-8s;}
+.cloud.c3{width:50px;top:3%;left:80%;animation:drift 30s linear infinite;animation-delay:-15s;}
+@keyframes drift{0%{transform:translateX(0)}100%{transform:translateX(-120vw)}}
+
+/* Ground */
+.ground{position:absolute;bottom:0;left:0;right:0;height:20%;background:linear-gradient(180deg,var(--grass) 0%,var(--grass2) 100%);border-radius:50% 50% 0 0 / 20% 20% 0 0;}
+
+/* Needs bar - top */
+.needs{display:flex;gap:6px;padding:10px 16px;position:relative;z-index:5;}
+.nd{flex:1;background:rgba(255,255,255,0.85);backdrop-filter:blur(8px);border-radius:14px;padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;transition:transform .15s;border:2px solid transparent;}
+.nd:active{transform:scale(.94);}
+.nd.low{border-color:var(--coral);animation:ndpulse 1.5s ease infinite;}
+@keyframes ndpulse{0%,100%{box-shadow:0 0 0 0 rgba(255,107,107,0)}50%{box-shadow:0 0 0 6px rgba(255,107,107,.2)}}
+.nd-icon{font-size:20px;}
+.nd-bar{width:100%;height:6px;border-radius:3px;background:rgba(0,0,0,.06);overflow:hidden;}
+.nd-fill{height:100%;border-radius:3px;transition:width .6s ease;}
+.nd-fill.faim{background:var(--coral);}
+.nd-fill.joie{background:var(--gold);}
+.nd-fill.propre{background:var(--blue);}
+.nd-fill.energie{background:var(--lav);}
+.nd-lbl{font-family:'Fredoka',sans-serif;font-size:10px;color:var(--mid);}
+
+/* ===== BÉBÊTE (CENTER STAGE) ===== */
+.bb-zone{flex:1;display:flex;align-items:center;justify-content:center;position:relative;z-index:2;}
+
+.bb{position:relative;cursor:pointer;transition:transform .3s;}
+.bb:active{transform:scale(.96);}
+
+/* Body */
+.bb-body{
+  width:200px;height:200px;border-radius:50%;position:relative;
+  background:linear-gradient(145deg,#B8E6FF,#89CFF0);
+  box-shadow:0 12px 30px rgba(137,207,240,.45),inset 0 -6px 16px rgba(0,0,0,.04);
+  display:flex;align-items:center;justify-content:center;
+  transition:background .5s,transform .3s;
+}
+.bb-body.happy{animation:bb-bounce 1s ease infinite;}
+.bb-body.sad{background:linear-gradient(145deg,#C5D5E4,#A8C0D4);animation:bb-droop 2s ease infinite;}
+.bb-body.sleepy{background:linear-gradient(145deg,#D4C5F0,#B8A8E0);animation:bb-droop 3s ease infinite;}
+.bb-body.dirty{background:linear-gradient(145deg,#D4C8A0,#B8AC88);}
+.bb-body.eating{animation:bb-munch .4s ease 3;}
+.bb-body.bathing{animation:bb-shake .3s ease 4;}
+.bb-body.playing{animation:bb-bounce .5s ease 6;}
+
+@keyframes bb-bounce{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-14px) scale(1.03)}}
+@keyframes bb-droop{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(4px) rotate(-2deg)}}
+@keyframes bb-munch{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+@keyframes bb-shake{0%,100%{transform:rotate(0)}25%{transform:rotate(5deg)}75%{transform:rotate(-5deg)}}
+@keyframes bb-idle{0%,100%{transform:translateY(0) rotate(0)}30%{transform:translateY(-5px) rotate(-1deg)}70%{transform:translateY(-3px) rotate(1deg)}}
+.bb-body.idle{animation:bb-idle 3s ease-in-out infinite;}
+
+/* Face */
+.bb-face{position:relative;width:120px;height:70px;}
+.bb-eye{position:absolute;width:24px;height:28px;background:var(--dark);border-radius:50%;top:0;transition:all .3s;}
+.bb-eye.l{left:16px;}.bb-eye.r{right:16px;}
+.bb-eye::after{content:'';position:absolute;width:9px;height:9px;background:#fff;border-radius:50%;top:5px;left:5px;transition:all .3s;}
+/* Sad eyes */
+.bb-body.sad .bb-eye{height:20px;border-radius:50% 50% 40% 40%;top:4px;}
+.bb-body.sad .bb-eye::after{top:3px;}
+/* Sleepy eyes */
+.bb-body.sleepy .bb-eye{height:6px;border-radius:10px;top:12px;}
+.bb-body.sleepy .bb-eye::after{display:none;}
+/* Happy eyes */
+.bb-body.happy .bb-eye::after{width:10px;height:10px;}
+/* Dirty spots */
+.bb-body.dirty::before{content:'';position:absolute;width:20px;height:16px;background:rgba(139,119,70,.3);border-radius:50%;top:25%;right:20%;transform:rotate(15deg);}
+.bb-body.dirty::after{content:'';position:absolute;width:14px;height:12px;background:rgba(139,119,70,.25);border-radius:50%;bottom:30%;left:22%;}
+
+.bb-mouth{position:absolute;bottom:4px;left:50%;transform:translateX(-50%);transition:all .3s;}
+.bb-mouth.happy{width:28px;height:16px;border-radius:0 0 16px 16px;background:var(--coral);}
+.bb-mouth.sad{width:20px;height:10px;border-radius:10px 10px 0 0;background:var(--coral);opacity:.6;margin-bottom:6px;}
+.bb-mouth.neutral{width:18px;height:8px;border-radius:0 0 10px 10px;background:var(--coral);opacity:.7;}
+.bb-mouth.sleepy{width:16px;height:10px;border-radius:50%;background:var(--dark);opacity:.2;}
+.bb-mouth.eating{width:22px;height:22px;border-radius:50%;background:var(--coral);animation:chomp .4s ease 3;}
+@keyframes chomp{0%,100%{height:22px;border-radius:50%}50%{height:8px;border-radius:10px}}
+
+.bb-cheek{position:absolute;width:22px;height:15px;border-radius:50%;background:var(--peach);opacity:.45;bottom:10px;transition:opacity .3s;}
+.bb-cheek.l{left:4px;}.bb-cheek.r{right:4px;}
+.bb-body.happy .bb-cheek{opacity:.65;}
+.bb-body.sad .bb-cheek{opacity:.2;}
+
+/* Arms */
+.bb-arm{position:absolute;width:34px;height:44px;background:linear-gradient(145deg,#A8D8EA,#7EC8E3);border-radius:22px;top:52%;transition:all .3s;}
+.bb-arm.l{left:-20px;transform:rotate(15deg);animation:arml 3s ease-in-out infinite;}
+.bb-arm.r{right:-20px;transform:rotate(-15deg);animation:armr 3s ease-in-out infinite;}
+@keyframes arml{0%,100%{transform:rotate(15deg)}50%{transform:rotate(5deg)}}
+@keyframes armr{0%,100%{transform:rotate(-15deg)}50%{transform:rotate(-5deg)}}
+.bb-body.happy .bb-arm.l{animation:wavl .5s ease 4!important;}
+.bb-body.happy .bb-arm.r{animation:wavr .5s ease 4!important;animation-delay:.1s!important;}
+@keyframes wavl{0%,100%{transform:rotate(15deg)}50%{transform:rotate(-30deg)}}
+@keyframes wavr{0%,100%{transform:rotate(-15deg)}50%{transform:rotate(30deg)}}
+
+/* Zzz for sleepy */
+.bb-zzz{position:absolute;top:-10px;right:-10px;font-size:24px;opacity:0;transition:opacity .3s;}
+.bb-body.sleepy .bb-zzz{opacity:1;animation:zzz 2s ease-in-out infinite;}
+@keyframes zzz{0%,100%{transform:translateY(0) rotate(0);opacity:.4}50%{transform:translateY(-16px) rotate(10deg);opacity:1}}
+
+/* Sparkle effect for clean */
+.bb-sparkle{position:absolute;font-size:18px;opacity:0;pointer-events:none;}
+.bb-sparkle.s1{top:-5px;left:10px;animation:sparkle 1.5s ease infinite;}
+.bb-sparkle.s2{top:20px;right:-5px;animation:sparkle 1.5s ease infinite .5s;}
+.bb-sparkle.s3{bottom:10px;left:-5px;animation:sparkle 1.5s ease infinite 1s;}
+@keyframes sparkle{0%,100%{opacity:0;transform:scale(.5)}50%{opacity:1;transform:scale(1.1)}}
+
+/* Speech bubble */
+.bubble{
+  position:absolute;bottom:calc(100% + 20px);left:50%;transform:translateX(-50%);
+  background:var(--white);border-radius:22px;padding:14px 20px;
+  box-shadow:var(--shadow);max-width:300px;min-width:100px;
+  font-family:'Nunito',sans-serif;font-size:22px;font-weight:700;
+  color:var(--dark);text-align:center;line-height:1.4;
+  cursor:pointer;animation:bub-in .4s ease-out;z-index:10;
+}
+.bubble::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:10px solid transparent;border-top-color:var(--white);}
+@keyframes bub-in{from{opacity:0;transform:translateX(-50%) translateY(6px) scale(.92)}to{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}}
+.bw{display:inline;cursor:pointer;padding:2px 4px;border-radius:6px;transition:background .15s;}
+.bw:active,.bw.hl{background:var(--gold);}
+
+/* ===== CARE ACTION BUTTONS ===== */
+.actions{
+  display:flex;gap:10px;padding:10px 16px 24px;position:relative;z-index:5;
+}
+.act{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;
+  padding:12px 4px;border:none;border-radius:18px;cursor:pointer;
+  background:var(--white);box-shadow:var(--shadow);
+  transition:transform .15s,box-shadow .15s;position:relative;
+}
+.act:active{transform:scale(.92);box-shadow:none;}
+.act-icon{font-size:28px;}
+.act-lbl{font-family:'Fredoka',sans-serif;font-size:13px;color:var(--dark);font-weight:600;}
+.act-badge{
+  position:absolute;top:-4px;right:-4px;width:20px;height:20px;
+  background:var(--coral);border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:11px;color:#fff;font-weight:800;border:2px solid var(--white);
+  animation:badge-pop .3s ease;
+}
+@keyframes badge-pop{from{transform:scale(0)}to{transform:scale(1)}}
+.act.disabled{opacity:.4;pointer-events:none;}
+
+/* ===== CARE PANELS (slide up) ===== */
+.panel{
+  position:absolute;bottom:0;left:0;right:0;z-index:20;
+  background:var(--white);border-radius:28px 28px 0 0;
+  box-shadow:var(--shadow-lg);
+  transform:translateY(100%);transition:transform .35s ease;
+  max-height:55%;overflow-y:auto;-webkit-overflow-scrolling:touch;
+}
+.panel.open{transform:translateY(0);}
+.panel-handle{width:40px;height:4px;background:rgba(0,0,0,.12);border-radius:2px;margin:10px auto;}
+.panel-title{font-family:'Fredoka',sans-serif;font-size:20px;color:var(--dark);text-align:center;padding:4px 0 12px;}
+.panel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:0 16px 24px;}
+.panel-item{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  padding:14px 8px;border-radius:18px;background:var(--warm-bg);
+  cursor:pointer;transition:transform .15s;border:2px solid transparent;
+}
+.panel-item:active{transform:scale(.93);}
+.panel-item.selected{border-color:var(--mint);background:rgba(78,205,196,.08);}
+.panel-item .pi-icon{font-size:36px;}
+.panel-item .pi-name{font-family:'Fredoka',sans-serif;font-size:14px;color:var(--dark);text-align:center;cursor:pointer;}
+.panel-item .pi-name:active{background:var(--gold);border-radius:6px;}
+.panel-item .pi-count{font-size:11px;color:var(--light);}
+.panel-item.empty{opacity:.3;}
+.panel-close{position:absolute;top:10px;right:16px;width:36px;height:36px;border:none;background:rgba(0,0,0,.05);border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.panel-close:active{background:rgba(0,0,0,.1);}
+.panel-action{
+  display:block;width:calc(100% - 32px);margin:0 16px 20px;padding:14px;
+  border:none;border-radius:16px;font-family:'Fredoka',sans-serif;font-size:18px;
+  color:var(--white);cursor:pointer;transition:transform .15s;
+}
+.panel-action:active{transform:scale(.97);}
+.panel-action.feed{background:var(--coral);}
+.panel-action.wash{background:var(--blue);}
+.panel-action.play{background:var(--gold);color:var(--dark);}
+.panel-action.sleep{background:var(--lav);}
+
+/* ===== EXPEDITION BUTTON ===== */
+.exp-btn{
+  position:absolute;top:38%;right:12px;z-index:5;
+  width:56px;height:56px;border-radius:50%;border:none;
+  background:var(--green);box-shadow:var(--shadow);
+  font-size:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:transform .15s;animation:exp-glow 2s ease infinite;
+}
+.exp-btn:active{transform:scale(.9);}
+@keyframes exp-glow{0%,100%{box-shadow:0 4px 16px rgba(129,199,132,.3)}50%{box-shadow:0 4px 24px rgba(129,199,132,.6)}}
+
+/* ===== EXPEDITION SCREEN ===== */
+#exped{background:linear-gradient(180deg,#E8F5E9,#C8E6C9);}
+.exp-area{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;gap:14px;}
+.topb{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:rgba(255,255,255,.85);backdrop-filter:blur(8px);border-bottom:1px solid rgba(0,0,0,.04);}
+.topb h2{font-family:'Fredoka',sans-serif;font-size:18px;color:var(--dark);}
+.topb-btn{width:40px;height:40px;border-radius:12px;border:none;font-size:20px;cursor:pointer;background:rgba(0,0,0,.04);display:flex;align-items:center;justify-content:center;transition:transform .15s;}
+.topb-btn:active{transform:scale(.9);}
+
+/* Instruction card */
+.icard{background:var(--white);border-radius:20px;padding:18px 22px;box-shadow:var(--shadow);max-width:340px;width:92%;text-align:center;}
+.icard .itxt{font-family:'Nunito',sans-serif;font-size:22px;font-weight:700;color:var(--dark);line-height:1.5;}
+.icard .ihint{font-size:40px;margin-bottom:6px;}
+.icard .itap{font-size:11px;color:var(--light);margin-top:6px;font-style:italic;}
+
+/* Map grid */
+.mgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:280px;height:280px;}
+.mcell{border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:32px;cursor:pointer;transition:transform .15s,box-shadow .15s;border:3px solid rgba(0,0,0,.04);background:rgba(255,255,255,.5);}
+.mcell:active{transform:scale(.92);}
+.mcell.cur{background:var(--gold);box-shadow:0 0 0 3px rgba(255,217,61,.5);animation:pulse 1.5s ease infinite;}
+.mcell.vis{background:rgba(167,139,250,.12);}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 3px rgba(255,217,61,.3)}50%{box-shadow:0 0 0 6px rgba(255,217,61,.5)}}
+
+/* Market */
+.mshelf{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:340px;}
+.mitm{background:var(--white);border-radius:18px;padding:14px;display:flex;flex-direction:column;align-items:center;gap:6px;box-shadow:var(--shadow);cursor:pointer;transition:transform .15s;border:3px solid transparent;}
+.mitm:active{transform:scale(.93);}
+.mitm.sel{border-color:var(--mint);background:rgba(78,205,196,.06);}
+.mitm.ok{border-color:var(--green);animation:pop .3s ease;}
+.mitm.nope{animation:shake .4s ease;border-color:var(--coral);}
+@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.06)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.mitm .mi-icon{font-size:36px;}
+.mitm .mi-name{font-family:'Fredoka',sans-serif;font-size:14px;color:var(--dark);cursor:pointer;padding:2px 6px;border-radius:6px;}
+.mitm .mi-name:active{background:var(--gold);}
+
+.slist{background:var(--white);border-radius:18px;padding:14px 20px;box-shadow:var(--shadow);max-width:340px;width:92%;}
+.slist h3{font-family:'Fredoka',sans-serif;font-size:14px;color:var(--mid);margin-bottom:6px;}
+.slist .sl-items{font-family:'Nunito';font-size:20px;font-weight:700;color:var(--dark);line-height:1.5;}
+.slw{display:inline;cursor:pointer;padding:2px 5px;border-radius:6px;transition:background .15s;}
+.slw:active{background:var(--gold);}
+.slw.found{text-decoration:line-through;opacity:.4;}
+
+/* Reward overlay */
+.rew-ov{position:fixed;top:0;left:0;right:0;bottom:0;z-index:100;background:rgba(45,39,64,.55);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;animation:fi .3s ease;}
+@keyframes fi{from{opacity:0}to{opacity:1}}
+.rew-card{background:var(--white);border-radius:26px;padding:28px;text-align:center;max-width:300px;width:85%;box-shadow:var(--shadow-lg);animation:rpop .4s ease;}
+@keyframes rpop{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+.rew-card .ri{font-size:64px;margin-bottom:10px;}
+.rew-card h3{font-family:'Fredoka';font-size:22px;color:var(--dark);margin-bottom:6px;}
+.rew-card .rd{font-size:16px;color:var(--dark);cursor:pointer;padding:8px 12px;background:rgba(78,205,196,.08);border-radius:12px;margin:10px 0 16px;line-height:1.4;}
+.rew-card .rd:active{background:rgba(78,205,196,.15);}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 28px;border:none;border-radius:16px;font-family:'Fredoka';font-size:17px;font-weight:600;cursor:pointer;transition:transform .15s;box-shadow:var(--shadow);}
+.btn:active{transform:scale(.95);}
+.btn-mint{background:var(--mint);color:#fff;}
+.btn-coral{background:var(--coral);color:#fff;}
+
+/* Particles */
+.part{position:fixed;pointer-events:none;z-index:90;font-size:22px;animation:partfly 1s ease-out forwards;}
+@keyframes partfly{0%{opacity:1;transform:translateY(0) scale(1) rotate(0deg)}100%{opacity:0;transform:translateY(-90px) scale(.4) rotate(30deg)}}
+
+/* Title */
+#title{background:linear-gradient(145deg,var(--warm-bg),#E8D5C4);align-items:center;justify-content:center;gap:20px;}
+.tlogo{font-family:'Fredoka';font-size:48px;font-weight:700;background:linear-gradient(135deg,var(--mint),var(--lav));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-align:center;animation:tfloat 3s ease-in-out infinite;}
+@keyframes tfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.tsub{font-size:17px;color:var(--mid);text-align:center;}
+.tbb{font-size:90px;animation:tfloat 3s ease-in-out infinite;animation-delay:.4s;}
+
+/* Screen transition */
+.trans{position:fixed;top:0;left:0;right:0;bottom:0;z-index:200;background:var(--dark);animation:wipe .5s ease-in-out;pointer-events:none;}
+@keyframes wipe{0%{opacity:0}25%{opacity:1}75%{opacity:1}100%{opacity:0}}
+
+/* Bath animation overlay */
+.bath-anim{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:3;}
+.bath-bubble{position:absolute;width:20px;height:20px;background:rgba(137,207,240,.4);border-radius:50%;border:2px solid rgba(255,255,255,.5);animation:bathb 1.5s ease-out forwards;}
+@keyframes bathb{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-60px) scale(.3)}}
+
+/* Sleep overlay */
+.sleep-ov{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(30,20,50,.5);z-index:3;display:flex;align-items:center;justify-content:center;animation:fi .5s ease;}
+.sleep-ov .sleep-txt{font-family:'Fredoka';font-size:28px;color:rgba(255,255,255,.7);animation:tfloat 3s ease-in-out infinite;}
+</style>
+</head>
+<body>
+<div id="game">
+
+<!-- TITLE -->
+<div id="title" class="scr on">
+  <div class="tbb">🫧</div>
+  <div class="tlogo">Petit Monde</div>
+  <div class="tsub">Prends soin de ton Bébête!</div>
+  <button class="btn btn-mint" onclick="G.start()" style="margin-top:16px;">✨ Commencer</button>
+</div>
+
+<!-- CARE SCREEN (MAIN) -->
+<div id="care" class="scr">
+  <div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div>
+  <div class="ground"></div>
+
+  <!-- Needs -->
+  <div class="needs">
+    <div class="nd" id="nd-faim" onclick="G.openPanel('feed')"><span class="nd-icon">🍎</span><div class="nd-bar"><div class="nd-fill faim" id="nf-faim"></div></div><span class="nd-lbl">Faim</span></div>
+    <div class="nd" id="nd-joie" onclick="G.openPanel('play')"><span class="nd-icon">⭐</span><div class="nd-bar"><div class="nd-fill joie" id="nf-joie"></div></div><span class="nd-lbl">Joie</span></div>
+    <div class="nd" id="nd-propre" onclick="G.openPanel('wash')"><span class="nd-icon">🫧</span><div class="nd-bar"><div class="nd-fill propre" id="nf-propre"></div></div><span class="nd-lbl">Propre</span></div>
+    <div class="nd" id="nd-energie" onclick="G.openPanel('sleep')"><span class="nd-icon">💤</span><div class="nd-bar"><div class="nd-fill energie" id="nf-energie"></div></div><span class="nd-lbl">Énergie</span></div>
+  </div>
+
+  <!-- Bébête -->
+  <div class="bb-zone">
+    <div class="bb" id="bb" onclick="G.tapBB()">
+      <div class="bubble" id="bubble" style="display:none;"></div>
+      <div class="bb-body idle" id="bb-body">
+        <div class="bb-arm l"></div><div class="bb-arm r"></div>
+        <div class="bb-zzz" id="bb-zzz">💤</div>
+        <span class="bb-sparkle s1">✨</span><span class="bb-sparkle s2">✨</span><span class="bb-sparkle s3">✨</span>
+        <div class="bb-face">
+          <div class="bb-eye l"></div><div class="bb-eye r"></div>
+          <div class="bb-cheek l"></div><div class="bb-cheek r"></div>
+          <div class="bb-mouth neutral" id="bb-mouth"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Expedition button -->
+  <button class="exp-btn" onclick="G.goExped()">🗺️</button>
+
+  <!-- Action buttons -->
+  <div class="actions">
+    <button class="act" onclick="G.openPanel('feed')"><span class="act-icon">🍽️</span><span class="act-lbl">Nourrir</span></button>
+    <button class="act" onclick="G.openPanel('wash')"><span class="act-icon">🛁</span><span class="act-lbl">Laver</span></button>
+    <button class="act" onclick="G.openPanel('play')"><span class="act-icon">🎾</span><span class="act-lbl">Jouer</span></button>
+    <button class="act" onclick="G.openPanel('sleep')"><span class="act-icon">🛏️</span><span class="act-lbl">Dormir</span></button>
+  </div>
+
+  <!-- Panels -->
+  <div class="panel" id="pnl-feed">
+    <div class="panel-handle"></div>
+    <button class="panel-close" onclick="G.closePanel()">✕</button>
+    <div class="panel-title">🍽️ Nourrir</div>
+    <div class="panel-grid" id="feed-grid"></div>
+    <div id="feed-empty" style="text-align:center;padding:0 16px 20px;display:none;">
+      <p style="color:var(--mid);font-size:15px;margin-bottom:12px;">Pas de nourriture! Va en expédition!</p>
+      <button class="btn btn-mint" onclick="G.closePanel();G.goExped();">🗺️ Expédition</button>
+    </div>
+  </div>
+
+  <div class="panel" id="pnl-wash">
+    <div class="panel-handle"></div>
+    <button class="panel-close" onclick="G.closePanel()">✕</button>
+    <div class="panel-title">🛁 Laver</div>
+    <div style="text-align:center;padding:0 16px 20px;">
+      <p style="color:var(--mid);font-size:15px;margin-bottom:14px;">Ton Bébête a besoin d'un bain!</p>
+      <button class="panel-action wash" onclick="G.doWash()">🫧 Laver le Bébête</button>
+    </div>
+  </div>
+
+  <div class="panel" id="pnl-play">
+    <div class="panel-handle"></div>
+    <button class="panel-close" onclick="G.closePanel()">✕</button>
+    <div class="panel-title">🎾 Jouer</div>
+    <div class="panel-grid" id="play-grid"></div>
+    <div id="play-empty" style="text-align:center;padding:0 16px 20px;display:none;">
+      <p style="color:var(--mid);font-size:15px;margin-bottom:12px;">Pas de jouets! Va en expédition!</p>
+      <button class="btn btn-mint" onclick="G.closePanel();G.goExped();">🗺️ Expédition</button>
+    </div>
+  </div>
+
+  <div class="panel" id="pnl-sleep">
+    <div class="panel-handle"></div>
+    <button class="panel-close" onclick="G.closePanel()">✕</button>
+    <div class="panel-title">🛏️ Dormir</div>
+    <div style="text-align:center;padding:0 16px 20px;">
+      <p style="color:var(--mid);font-size:15px;margin-bottom:14px;">Bonne nuit, Bébête!</p>
+      <button class="panel-action sleep" onclick="G.doSleep()">🌙 Faire dodo</button>
+    </div>
+  </div>
+</div>
+
+<!-- EXPEDITION -->
+<div id="exped" class="scr">
+  <div class="topb">
+    <button class="topb-btn" onclick="G.exitExped()">←</button>
+    <h2 id="exp-title">🌿 Expédition</h2>
+    <div style="width:40px;"></div>
+  </div>
+  <div class="exp-area" id="exp-area"></div>
+</div>
+
+</div>
+<script>
+// ============================================================
+// PETIT MONDE — TAMAGOTCHI-FIRST ENGINE
+// ============================================================
+const G = {
+  s: {
+    needs: { faim:65, joie:70, propre:80, energie:75 },
+    inv: [
+      {name:'Pomme',emoji:'🍎',cat:'food',desc:'Une pomme rouge.',lvl:'C'},
+      {name:'Pain',emoji:'🍞',cat:'food',desc:'Du bon pain.',lvl:'C'},
+      {name:'Balle',emoji:'🎾',cat:'toy',desc:'Une balle pour jouer.',lvl:'C'},
+    ],
+    lvl:'C',
+    mastery:{sw:15,dec:10,comp:8,flu:8,txt:8},
+    expCount:0,
+    heard:new Set(),
+  },
+
+  // ---- CONTENT ----
+  C:{
+    speech:{
+      idle:[
+        {t:'Mon ami!',e:'happy'},{t:'Bonjour!',e:'happy'},{t:'Jouer!',e:'curious'},
+        {t:'C\'est beau!',e:'amazed'},{t:'Regarde!',e:'curious'},
+      ],
+      hungry:[{t:'Faim!',e:'sad'},{t:'J\'ai faim!',e:'sad'},{t:'Manger!',e:'sad'}],
+      dirty:[{t:'Beurk!',e:'sad'},{t:'Pas propre!',e:'sad'}],
+      tired:[{t:'Dodo...',e:'sleepy'},{t:'Fatigué...',e:'sleepy'}],
+      bored:[{t:'Jouer!',e:'bored'},{t:'Je m\'ennuie!',e:'bored'}],
+      fed:[{t:'Miam!',e:'happy'},{t:'Merci!',e:'happy'},{t:'C\'est bon!',e:'happy'}],
+      washed:[{t:'Propre!',e:'happy'},{t:'C\'est beau!',e:'happy'}],
+      played:[{t:'Encore!',e:'happy'},{t:'C\'est amusant!',e:'happy'}],
+      slept:[{t:'Bonjour!',e:'happy'}],
+      loot:[{t:'Oui!',e:'excited'},{t:'Pour moi?',e:'amazed'}],
+    },
+    foods:[
+      {name:'Pomme',emoji:'🍎',desc:'Une pomme rouge.',lvl:'C'},
+      {name:'Pain',emoji:'🍞',desc:'Du bon pain.',lvl:'C'},
+      {name:'Lait',emoji:'🥛',desc:'Du bon lait.',lvl:'C'},
+      {name:'Fraise',emoji:'🍓',desc:'Une fraise.',lvl:'D'},
+      {name:'Fromage',emoji:'🧀',desc:'Du fromage.',lvl:'D'},
+      {name:'Gâteau',emoji:'🎂',desc:'Un gâteau!',lvl:'D'},
+      {name:'Chocolat',emoji:'🍫',desc:'Du chocolat.',lvl:'E'},
+      {name:'Crème glacée',emoji:'🍦',desc:'De la crème glacée!',lvl:'E'},
+    ],
+    toys:[
+      {name:'Balle',emoji:'🎾',desc:'Une balle pour jouer.',lvl:'C'},
+      {name:'Peluche',emoji:'🧸',desc:'Une peluche douce.',lvl:'C'},
+      {name:'Livre',emoji:'📚',desc:'Un livre d\'histoires.',lvl:'D'},
+      {name:'Chapeau',emoji:'🎩',desc:'Un chapeau amusant!',lvl:'D'},
+      {name:'Couronne',emoji:'👑',desc:'Une belle couronne!',lvl:'E'},
+      {name:'Bulles',emoji:'🫧',desc:'Des bulles de savon!',lvl:'D'},
+    ],
+    loot:[
+      {name:'Pomme',emoji:'🍎',cat:'food',desc:'Une pomme rouge.',lvl:'C',r:'common'},
+      {name:'Pain',emoji:'🍞',cat:'food',desc:'Du bon pain.',lvl:'C',r:'common'},
+      {name:'Fleur',emoji:'🌸',cat:'deco',desc:'Une jolie fleur.',lvl:'C',r:'common'},
+      {name:'Fraise',emoji:'🍓',cat:'food',desc:'Une fraise.',lvl:'D',r:'common'},
+      {name:'Balle',emoji:'🎾',cat:'toy',desc:'Une balle pour jouer.',lvl:'C',r:'common'},
+      {name:'Peluche',emoji:'🧸',cat:'toy',desc:'Une peluche douce.',lvl:'C',r:'uncommon'},
+      {name:'Étoile',emoji:'⭐',cat:'deco',desc:'Une petite étoile qui brille.',lvl:'D',r:'uncommon'},
+      {name:'Chapeau',emoji:'🎩',cat:'toy',desc:'Un petit chapeau rouge.',lvl:'D',r:'uncommon'},
+      {name:'Gâteau',emoji:'🎂',cat:'food',desc:'Un gâteau!',lvl:'D',r:'uncommon'},
+      {name:'Livre',emoji:'📚',cat:'toy',desc:'Un livre d\'histoires.',lvl:'D',r:'uncommon'},
+      {name:'Papillon',emoji:'🦋',cat:'deco',desc:'Un beau papillon doré.',lvl:'E',r:'rare'},
+      {name:'Couronne',emoji:'👑',cat:'toy',desc:'Une magnifique couronne!',lvl:'E',r:'rare'},
+      {name:'Cristal',emoji:'🔮',cat:'deco',desc:'Un cristal qui brille!',lvl:'F',r:'epic'},
+      {name:'Arc-en-ciel',emoji:'🌈',cat:'deco',desc:'Un arc-en-ciel extraordinaire!',lvl:'F',r:'legendary'},
+    ],
+    mapDir:{
+      C:[{t:'Va à gauche.',h:'⬅️',a:'left'},{t:'Va à droite.',h:'➡️',a:'right'},{t:'Va tout droit.',h:'⬆️',a:'up'}],
+      D:[{t:'Va à gauche, puis tout droit.',h:'',a:['left','up']},{t:'Va à droite, puis tout droit.',h:'',a:['right','up']}],
+      E:[{t:'Va à gauche. Passe la fleur. Va à droite.',h:'',a:['left','up','right']}],
+      F:[{t:'D\'abord, va tout droit. Ensuite, tourne à gauche. Le trésor est là!',h:'',a:['up','left']}],
+    },
+    mktList:{
+      C:[{it:['pomme','pain'],em:['🍎','🍞'],dis:['fromage','lait','fraise','balle']}],
+      D:[{it:['fromage','pain','lait'],em:['🧀','🍞','🥛'],dis:['pomme','fraise','chocolat']}],
+      E:[{it:['pomme','fromage','fraise','chocolat'],em:['🍎','🧀','🍓','🍫'],dis:['lait','beurre']}],
+      F:[{it:['fromage','pain','lait','fraise','chocolat'],em:['🧀','🍞','🥛','🍓','🍫'],dis:['beurre']}],
+    },
+  },
+
+  // ---- AUDIO ----
+  A:{
+    sy:window.speechSynthesis, v:null, on:false,
+    init(){const l=()=>{const vs=this.sy.getVoices();this.v=vs.find(v=>v.lang==='fr-CA')||vs.find(v=>v.lang.startsWith('fr'))||vs[0];};l();this.sy.onvoiceschanged=l;},
+    say(t,r=0.85){if(this.on)this.sy.cancel();const u=new SpeechSynthesisUtterance(t);u.voice=this.v;u.lang='fr-CA';u.rate=r;u.pitch=1.1;this.on=true;u.onend=()=>{this.on=false;};this.sy.speak(u);},
+    word(w){this.say(w,0.75);G.s.heard.add(w.toLowerCase());},
+  },
+
+  // ---- SCREENS ----
+  curScr:'title',
+  sw(id){
+    const t=document.createElement('div');t.className='trans';document.getElementById('game').appendChild(t);
+    setTimeout(()=>{document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on');this.curScr=id;},180);
+    setTimeout(()=>t.remove(),500);
+  },
+
+  start(){
+    this.A.init();this.sw('care');this.updateBB();this.updateNeeds();
+    setTimeout(()=>this.say('idle'),700);
+    this.decayTimer=setInterval(()=>this.decay(),15000);
+    this.checkTimer=setInterval(()=>this.checkState(),5000);
+  },
+
+  // ---- BÉBÊTE STATE ----
+  getBBState(){
+    const n=this.s.needs;
+    if(n.energie<15) return 'sleepy';
+    if(n.faim<20) return 'sad';
+    if(n.propre<20) return 'dirty';
+    if(n.joie<20) return 'sad';
+    if(n.faim>70&&n.joie>70&&n.propre>70&&n.energie>50) return 'happy';
+    return 'idle';
+  },
+
+  getMouthState(){
+    const st=this.getBBState();
+    if(st==='happy') return 'happy';
+    if(st==='sad') return 'sad';
+    if(st==='sleepy') return 'sleepy';
+    if(st==='dirty') return 'neutral';
+    return 'neutral';
+  },
+
+  updateBB(){
+    const body=document.getElementById('bb-body');
+    const mouth=document.getElementById('bb-mouth');
+    const st=this.getBBState();
+    body.className='bb-body '+st;
+    mouth.className='bb-mouth '+this.getMouthState();
+  },
+
+  updateNeeds(){
+    const n=this.s.needs;
+    ['faim','joie','propre','energie'].forEach(k=>{
+      document.getElementById('nf-'+k).style.width=n[k]+'%';
+      const nd=document.getElementById('nd-'+k);
+      nd.classList.toggle('low',n[k]<25);
+    });
+  },
+
+  decay(){
+    const n=this.s.needs;
+    n.faim=Math.max(0,n.faim-4);
+    n.joie=Math.max(0,n.joie-3);
+    n.propre=Math.max(0,n.propre-2);
+    n.energie=Math.max(0,n.energie-2);
+    this.updateNeeds();this.updateBB();
+  },
+
+  checkState(){
+    if(this.curScr!=='care') return;
+    const n=this.s.needs;
+    if(n.faim<20&&Math.random()>.5) this.say('hungry');
+    else if(n.propre<20&&Math.random()>.5) this.say('dirty');
+    else if(n.energie<15&&Math.random()>.5) this.say('tired');
+    else if(n.joie<20&&Math.random()>.5) this.say('bored');
+  },
+
+  tapBB(){
+    this.particles('❤️',3);
+    this.s.needs.joie=Math.min(100,this.s.needs.joie+3);
+    this.updateNeeds();this.updateBB();
+    this.say('idle');
+  },
+
+  // ---- SPEECH ----
+  say(type){
+    const pool=this.C.speech[type];if(!pool||!pool.length)return;
+    const pick=pool[Math.floor(Math.random()*pool.length)];
+    this.showBubble(pick.t,pick.e);
+  },
+
+  showBubble(text,emotion){
+    const b=document.getElementById('bubble');
+    const words=text.split(/(\s+)/);
+    b.innerHTML=words.map(w=>{
+      if(!w.trim())return w;
+      return `<span class="bw" onclick="G.tapW(this,'${w.replace(/'/g,"\\'")}')">${w}</span>`;
+    }).join('');
+    b.style.display='block';
+    // Set temp body state for emotion
+    const body=document.getElementById('bb-body');
+    if(emotion==='happy'||emotion==='excited'||emotion==='amazed'){
+      body.className='bb-body happy';
+      document.getElementById('bb-mouth').className='bb-mouth happy';
+    }
+    if(this.s.lvl==='C') setTimeout(()=>this.A.say(text),300);
+    clearTimeout(this._bubT);
+    this._bubT=setTimeout(()=>{b.style.display='none';this.updateBB();},5000);
+  },
+
+  tapW(el,w){el.classList.add('hl');this.A.word(w);setTimeout(()=>el.classList.remove('hl'),400);},
+
+  // ---- CARE PANELS ----
+  openPanel(type){
+    this.closePanel();
+    const pnl=document.getElementById('pnl-'+{feed:'feed',wash:'wash',play:'play',sleep:'sleep'}[type]);
+    if(type==='feed') this.renderFeedPanel();
+    if(type==='play') this.renderPlayPanel();
+    setTimeout(()=>pnl.classList.add('open'),10);
+  },
+
+  closePanel(){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('open'));},
+
+  renderFeedPanel(){
+    const foods=this.s.inv.filter(i=>i.cat==='food');
+    const grid=document.getElementById('feed-grid');
+    const empty=document.getElementById('feed-empty');
+    if(!foods.length){grid.innerHTML='';empty.style.display='block';return;}
+    empty.style.display='none';
+    // Group
+    const groups={};foods.forEach(f=>{if(!groups[f.name])groups[f.name]={...f,count:0};groups[f.name].count++;});
+    grid.innerHTML=Object.values(groups).map(f=>`
+      <div class="panel-item" onclick="G.doFeed('${f.name.replace(/'/g,"\\'")}')">
+        <span class="pi-icon">${f.emoji}</span>
+        <span class="pi-name" onclick="event.stopPropagation();G.A.word('${f.name}')">${f.name}</span>
+        <span class="pi-count">×${f.count}</span>
+      </div>
+    `).join('');
+  },
+
+  renderPlayPanel(){
+    const toys=this.s.inv.filter(i=>i.cat==='toy');
+    const grid=document.getElementById('play-grid');
+    const empty=document.getElementById('play-empty');
+    if(!toys.length){grid.innerHTML='';empty.style.display='block';return;}
+    empty.style.display='none';
+    const groups={};toys.forEach(t=>{if(!groups[t.name])groups[t.name]={...t,count:0};groups[t.name].count++;});
+    grid.innerHTML=Object.values(groups).map(t=>`
+      <div class="panel-item" onclick="G.doPlay('${t.name.replace(/'/g,"\\'")}')">
+        <span class="pi-icon">${t.emoji}</span>
+        <span class="pi-name" onclick="event.stopPropagation();G.A.word('${t.name}')">${t.name}</span>
+        <span class="pi-count">×${t.count}</span>
+      </div>
+    `).join('');
+  },
+
+  // ---- CARE ACTIONS ----
+  doFeed(name){
+    const idx=this.s.inv.findIndex(i=>i.name===name&&i.cat==='food');
+    if(idx===-1)return;
+    this.s.inv.splice(idx,1);
+    this.closePanel();
+
+    // Animate eating
+    const body=document.getElementById('bb-body');
+    body.className='bb-body eating';
+    document.getElementById('bb-mouth').className='bb-mouth eating';
+    this.particles('😋',3);
+    this.A.say(name);
+
+    this.s.needs.faim=Math.min(100,this.s.needs.faim+25);
+    this.s.needs.joie=Math.min(100,this.s.needs.joie+8);
+    this.updateNeeds();
+
+    setTimeout(()=>{this.say('fed');this.updateBB();},1200);
+  },
+
+  doWash(){
+    this.closePanel();
+    const body=document.getElementById('bb-body');
+    body.className='bb-body bathing';
+
+    // Spawn bath bubbles
+    const zone=document.querySelector('.bb-zone');
+    for(let i=0;i<12;i++){
+      setTimeout(()=>{
+        const b=document.createElement('div');
+        b.className='bath-bubble';
+        b.style.left=(30+Math.random()*40)+'%';
+        b.style.bottom=(20+Math.random()*30)+'%';
+        b.style.width=b.style.height=(12+Math.random()*16)+'px';
+        b.style.animationDuration=(1+Math.random())+'s';
+        zone.appendChild(b);
+        setTimeout(()=>b.remove(),2000);
+      },i*150);
+    }
+
+    this.particles('🫧',5);
+    this.s.needs.propre=Math.min(100,this.s.needs.propre+35);
+    this.s.needs.joie=Math.min(100,this.s.needs.joie+5);
+    this.updateNeeds();
+
+    setTimeout(()=>{this.say('washed');this.particles('✨',4);this.updateBB();},1800);
+  },
+
+  doPlay(name){
+    // Don't consume the toy
+    this.closePanel();
+    const body=document.getElementById('bb-body');
+    body.className='bb-body playing';
+    this.particles('🎉',4);
+    this.A.word(name);
+
+    this.s.needs.joie=Math.min(100,this.s.needs.joie+20);
+    this.s.needs.energie=Math.max(0,this.s.needs.energie-5);
+    this.updateNeeds();
+
+    setTimeout(()=>{this.say('played');this.updateBB();},2000);
+  },
+
+  doSleep(){
+    this.closePanel();
+    const body=document.getElementById('bb-body');
+    body.className='bb-body sleepy';
+    document.getElementById('bb-mouth').className='bb-mouth sleepy';
+
+    // Dark overlay with Zzz
+    const ov=document.createElement('div');
+    ov.className='sleep-ov';
+    ov.innerHTML='<div class="sleep-txt">💤 Bonne nuit... 💤</div>';
+    ov.onclick=()=>{ov.remove();wakeUp();};
+    document.getElementById('care').appendChild(ov);
+
+    this.A.say('Bonne nuit, Bébête.',0.7);
+
+    const wakeUp=()=>{
+      this.s.needs.energie=Math.min(100,this.s.needs.energie+40);
+      this.s.needs.faim=Math.max(0,this.s.needs.faim-10);
+      this.updateNeeds();
+      this.say('slept');
+      this.particles('☀️',3);
+      this.updateBB();
+    };
+
+    // Auto wake after 4 seconds or tap
+    setTimeout(()=>{if(ov.parentNode){ov.remove();wakeUp();}},4000);
+  },
+
+  // ---- EXPEDITIONS ----
+  exp:{step:0,total:3,gm:null},
+
+  goExped(){this.sw('exped');setTimeout(()=>this.nextStep(),300);this.exp.step=0;this.exp.total=this.s.lvl==='C'?2:3;},
+  exitExped(){this.sw('care');this.updateBB();this.updateNeeds();},
+
+  nextStep(){
+    if(this.exp.step>=this.exp.total){this.finishExp();return;}
+    const games=['map','market'];
+    const g=games[this.exp.step%games.length];
+    this.exp.step++;
+    if(g==='map')this.startMap();else this.startMkt();
+  },
+
+  finishExp(){
+    // Random loot
+    const pool=this.C.loot.filter(l=>'CDEF'.indexOf(l.lvl)<='CDEF'.indexOf(this.s.lvl)+1);
+    const item=pool[Math.floor(Math.random()*pool.length)];
+    this.s.inv.push({...item,id:Date.now()});
+    this.s.needs.joie=Math.min(100,this.s.needs.joie+10);
+    this.s.expCount++;
+    this.showReward(item);
+  },
+
+  showReward(item){
+    const ov=document.createElement('div');
+    ov.className='rew-ov';
+    ov.innerHTML=`<div class="rew-card">
+      <div class="ri">${item.emoji}</div>
+      <h3>${item.name}</h3>
+      <div class="rd" onclick="G.A.say('${item.desc.replace(/'/g,"\\'")}')">${item.desc}</div>
+      <p style="font-size:12px;color:var(--light);">Touche pour écouter 🔊</p>
+      <button class="btn btn-mint" onclick="this.closest('.rew-ov').remove();G.sw('care');setTimeout(()=>{G.say('loot');G.updateBB();G.updateNeeds();},400);">🏠 Rentrer</button>
+    </div>`;
+    document.getElementById('game').appendChild(ov);
+    if(this.s.lvl==='C')setTimeout(()=>this.A.say(item.desc),500);
+    this.particles('✨',6);
+  },
+
+  // ---- MINI: TREASURE MAP ----
+  startMap(){
+    const area=document.getElementById('exp-area');
+    const dirs=this.C.mapDir[this.s.lvl]||this.C.mapDir.C;
+    const dir=dirs[Math.floor(Math.random()*dirs.length)];
+    const grid=Array(9).fill(0);
+    const icons=['🌸','🌳','🍄','🌻','🪨','🌿','🦋','🐛','⭐'];
+    const start=7;
+    for(let i=0;i<9;i++)if(i!==start)grid[i]=icons[i];
+
+    const ans=Array.isArray(dir.a)?dir.a:[dir.a];
+    const dm={left:-1,right:1,up:-3,down:3};
+    let pos=start;for(const d of ans){const np=pos+dm[d];if(np>=0&&np<9)pos=np;}
+    const treas=pos;grid[treas]='🎁';
+
+    const whtml=dir.t.split(/(\s+)/).map(w=>{
+      if(!w.trim())return w;
+      return `<span class="bw" onclick="G.tapW(this,'${w.replace(/'/g,"\\'")}')">${w}</span>`;
+    }).join('');
+
+    area.innerHTML=`
+      <div class="icard">${dir.h?`<div class="ihint">${dir.h}</div>`:''}<div class="itxt">${whtml}</div><div class="itap">Touche un mot pour écouter 🔊</div></div>
+      <div class="mgrid">${grid.map((c,i)=>`<div class="mcell${i===start?' cur':''}" data-i="${i}" onclick="G.mTap(${i},${treas})">${i===start?'🐾':c}</div>`).join('')}</div>
+    `;
+    this._mp={t:treas,p:start,m:0};
+    if(this.s.lvl==='C')setTimeout(()=>this.A.say(dir.t),400);
+  },
+
+  mTap(i,t){
+    const cells=document.querySelectorAll('.mcell');const s=this._mp;
+    const cr=Math.floor(s.p/3),cc=s.p%3,nr=Math.floor(i/3),nc=i%3;
+    if(Math.abs(cr-nr)+Math.abs(cc-nc)!==1)return;
+    cells[s.p].classList.remove('cur');cells[s.p].classList.add('vis');cells[s.p].textContent='👣';
+    s.p=i;s.m++;
+    if(i===t){
+      cells[i].innerHTML='🎉';cells[i].classList.add('cur');cells[i].style.background='var(--gold)';
+      this.A.say('Bravo! Tu as trouvé le trésor!');this.particles('⭐',4);
+      this.s.mastery.comp+=3;this.s.mastery.sw+=2;
+      setTimeout(()=>this.nextStep(),1800);
+    } else {cells[i].textContent='🐾';cells[i].classList.add('cur');}
+  },
+
+  // ---- MINI: MARKET ----
+  startMkt(){
+    const area=document.getElementById('exp-area');
+    const lists=this.C.mktList[this.s.lvl]||this.C.mktList.C;
+    const list=lists[Math.floor(Math.random()*lists.length)];
+    const all=[];
+    list.it.forEach((item,i)=>all.push({w:item,e:list.em[i],t:true}));
+    list.dis.forEach(item=>{
+      const v=this.C.foods.find(f=>f.name.toLowerCase()===item)||this.C.toys.find(t=>t.name.toLowerCase()===item);
+      all.push({w:item,e:v?v.emoji:'❓',t:false});
+    });
+    for(let i=all.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[all[i],all[j]]=[all[j],all[i]];}
+
+    const lhtml=list.it.map(it=>`<span class="slw" data-w="${it}" onclick="G.tapW(this,'${it}')">${it}</span>`).join(', ');
+
+    area.innerHTML=`
+      <div class="slist"><h3>🛒 Liste:</h3><div class="sl-items">${lhtml}</div></div>
+      <div class="mshelf">${all.map(it=>`
+        <div class="mitm" data-w="${it.w}" data-t="${it.t}" onclick="G.mkTap(this)">
+          <span class="mi-icon">${it.e}</span>
+          <span class="mi-name" onclick="event.stopPropagation();G.A.word('${it.w}')">${it.w}</span>
+        </div>`).join('')}</div>
+    `;
+    this._mk={found:0,total:list.it.length};
+    if(this.s.lvl==='C')setTimeout(()=>this.A.say('J\'ai besoin de: '+list.it.join(', ')),400);
+  },
+
+  mkTap(el){
+    if(el.classList.contains('ok'))return;
+    if(el.dataset.t==='true'){
+      el.classList.add('ok');this.A.word(el.dataset.w);this.particles('✅',1);
+      this.s.mastery.sw+=2;this._mk.found++;
+      const lw=document.querySelector(`.slw[data-w="${el.dataset.w}"]`);if(lw)lw.classList.add('found');
+      if(this._mk.found>=this._mk.total){
+        setTimeout(()=>{this.A.say('Bravo!');this.particles('🎉',4);setTimeout(()=>this.nextStep(),1500);},400);
+      }
+    } else {el.classList.add('nope');this.A.word(el.dataset.w);setTimeout(()=>el.classList.remove('nope'),500);}
+  },
+
+  // ---- PARTICLES ----
+  particles(e,n){
+    for(let i=0;i<n;i++){
+      setTimeout(()=>{
+        const p=document.createElement('div');p.className='part';p.textContent=e;
+        p.style.left=(25+Math.random()*50)+'%';p.style.top=(35+Math.random()*20)+'%';
+        p.style.animationDuration=(.7+Math.random()*.5)+'s';
+        document.getElementById('game').appendChild(p);
+        setTimeout(()=>p.remove(),1500);
+      },i*80);
+    }
+  },
+};
+
+document.addEventListener('touchend',e=>{if(e.target.closest('button,.mcell,.mitm,.bw,.panel-item,.nd,.bb,.act,.exp-btn,.slw,.mi-name,.pi-name,.rd'))e.preventDefault();},{passive:false});
+</script>
+</body>
+</html>

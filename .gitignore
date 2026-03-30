@@ -1,0 +1,5 @@
+.DS_Store
+.vscode/
+curriculum_pdfs/
+doc*.pdf
+*.xlsx

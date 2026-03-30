@@ -1,0 +1,19 @@
+{
+  "name": "Petit Monde",
+  "short_name": "Petit Monde",
+  "description": "Prends soin de ton Bébête et apprends le français en jouant.",
+  "start_url": "./petit-monde-v3.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FEF6EE",
+  "theme_color": "#4ECDC4",
+  "icons": [
+    {
+      "src": "./icon-bubble.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

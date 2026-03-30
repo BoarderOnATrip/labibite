@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Petit Monde — 7-Stage Arc Design</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#1a1625;--card:#241f33;--cardh:#2d2740;--coral:#ff6b6b;--mint:#4ecdc4;--gold:#ffd93d;--lav:#a78bfa;--peach:#ffb4a2;--green:#81c784;--txt:#e8e4f0;--dim:#9b93ab;--wh:#fff;--brd:rgba(167,139,250,.15);}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--txt);line-height:1.7;overflow-x:hidden;}
+.ct{max-width:880px;margin:0 auto;padding:40px 20px 120px;}
+
+/* Hero */
+.hero{text-align:center;padding:60px 0 40px;position:relative;}
+.hero::before{content:'';position:absolute;top:-80px;left:50%;transform:translateX(-50%);width:500px;height:500px;background:radial-gradient(circle,rgba(78,205,196,.1) 0%,rgba(167,139,250,.05) 40%,transparent 70%);pointer-events:none;}
+.badge{display:inline-block;padding:5px 14px;background:rgba(78,205,196,.1);border:1px solid rgba(78,205,196,.2);border-radius:100px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--mint);margin-bottom:20px;}
+h1{font-family:'Fredoka';font-size:clamp(36px,7vw,56px);font-weight:700;color:var(--wh);line-height:1.1;margin-bottom:10px;}
+h1 span{background:linear-gradient(135deg,var(--mint),var(--lav));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero-sub{font-size:18px;color:var(--dim);max-width:500px;margin:0 auto 24px;font-weight:300;}
+
+/* Sections */
+section{margin-bottom:48px;}
+h2{font-family:'Fredoka';font-size:28px;font-weight:600;color:var(--wh);margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--brd);}
+h2 .n{color:var(--mint);margin-right:6px;font-size:22px;}
+h3{font-family:'Fredoka';font-size:18px;font-weight:500;color:var(--peach);margin:20px 0 8px;}
+p{margin-bottom:14px;font-size:15px;}
+strong{color:var(--wh);}
+
+/* Stage cards */
+.stage{background:var(--card);border:1px solid var(--brd);border-radius:20px;padding:24px;margin-bottom:20px;position:relative;overflow:hidden;}
+.stage::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;}
+.stage.s1::before{background:linear-gradient(90deg,#ffb4a2,#ff6b6b);}
+.stage.s2::before{background:linear-gradient(90deg,#ffd93d,#ffb347);}
+.stage.s3::before{background:linear-gradient(90deg,#81c784,#4ecdc4);}
+.stage.s4::before{background:linear-gradient(90deg,#4ecdc4,#89cff0);}
+.stage.s5::before{background:linear-gradient(90deg,#89cff0,#a78bfa);}
+.stage.s6::before{background:linear-gradient(90deg,#a78bfa,#c084fc);}
+.stage.s7::before{background:linear-gradient(90deg,#c084fc,#ffd93d);}
+
+.stage-head{display:flex;align-items:center;gap:14px;margin-bottom:14px;}
+.stage-icon{font-size:40px;}
+.stage-info h4{font-family:'Fredoka';font-size:20px;color:var(--wh);}
+.stage-info .stage-sub{font-size:13px;color:var(--dim);}
+
+.stage-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;}
+@media(max-width:600px){.stage-grid{grid-template-columns:1fr;}}
+.sg-box{background:rgba(0,0,0,.15);border-radius:12px;padding:14px;}
+.sg-box .sg-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--mint);margin-bottom:4px;}
+.sg-box ul{list-style:none;padding:0;}
+.sg-box li{font-size:13px;padding:2px 0 2px 14px;position:relative;}
+.sg-box li::before{content:'›';position:absolute;left:0;color:var(--mint);font-weight:700;}
+
+.reading-tag{display:inline-block;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:700;font-family:'Fredoka';margin-left:6px;}
+.rt-c{background:rgba(255,107,107,.15);color:var(--coral);}
+.rt-d{background:rgba(255,217,61,.15);color:var(--gold);}
+.rt-e{background:rgba(78,205,196,.15);color:var(--mint);}
+.rt-f{background:rgba(167,139,250,.15);color:var(--lav);}
+
+/* Timeline */
+.timeline{position:relative;padding-left:30px;}
+.timeline::before{content:'';position:absolute;left:12px;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--coral),var(--gold),var(--mint),var(--lav),var(--gold));border-radius:2px;}
+.tl-item{position:relative;margin-bottom:28px;}
+.tl-item::before{content:'';position:absolute;left:-22px;top:6px;width:12px;height:12px;border-radius:50%;border:3px solid var(--mint);background:var(--bg);}
+.tl-item h4{font-family:'Fredoka';font-size:16px;color:var(--wh);}
+.tl-item p{font-size:13px;color:var(--dim);margin:2px 0 0;}
+
+/* Highlight */
+.hl{background:linear-gradient(135deg,rgba(78,205,196,.08),rgba(167,139,250,.08));border:1px solid rgba(78,205,196,.18);border-radius:16px;padding:20px;margin:20px 0;}
+.hl h4{font-family:'Fredoka';font-size:15px;color:var(--mint);margin-bottom:6px;}
+.hl.gold{background:linear-gradient(135deg,rgba(255,217,61,.08),rgba(255,180,162,.08));border-color:rgba(255,217,61,.18);}
+.hl.gold h4{color:var(--gold);}
+
+.footer{text-align:center;padding:40px 0;color:var(--dim);font-size:12px;border-top:1px solid var(--brd);margin-top:40px;}
+</style>
+</head>
+<body>
+<div class="ct">
+
+<div class="hero">
+  <div class="badge">Full Arc Design v2.0</div>
+  <h1>Diapers to <span>Terraforming</span></h1>
+  <p class="hero-sub">Seven stages of hyperscale parenting — from toilet training to building a civilization in your backyard</p>
+</div>
+
+<!-- ====== THE ARC ====== -->
+<section>
+  <h2><span class="n">◆</span> The 7-Stage Arc</h2>
+  <p>Each stage transforms what "care" means, what the world looks like, what reading is required, and what Carmen's role is. The Bébête grows, has babies, and eventually the colony fills the backyard. The emotional hook escalates from nurture to pride to wonder.</p>
+
+  <!-- STAGE 1 -->
+  <div class="stage s1">
+    <div class="stage-head">
+      <span class="stage-icon">👶</span>
+      <div class="stage-info">
+        <h4>Stage 1: Le Bébé</h4>
+        <div class="stage-sub">Helpless blob in a diaper · Carmen is the parent <span class="reading-tag rt-c">Level C</span></div>
+      </div>
+    </div>
+    <p>The Bébête is tiny, round, can't walk, and needs EVERYTHING. It cries, it poops, it's hungry every 30 seconds. Carmen's job is pure survival parenting. This is the hook — the creature is so helpless and cute that she can't look away.</p>
+    <div class="stage-grid">
+      <div class="sg-box">
+        <div class="sg-label">Care Mechanics</div>
+        <ul>
+          <li><strong>Feeding</strong> — drag bottle/food to mouth. Bébête makes chomping face.</li>
+          <li><strong>Diaper changes</strong> — visible dirty diaper appears, Carmen taps to change. Bébête giggles.</li>
+          <li><strong>Potty timing</strong> — Bébête makes a "face" (scrunches up). Carmen taps the toilet icon FAST. Success = confetti + "Bravo!" Fail = diaper needed.</li>
+          <li><strong>Sleeping</strong> — rock the Bébête by swaying phone/dragging side to side.</li>
+          <li><strong>Crying</strong> — tap to pick up. Bébête calms down in Carmen's "arms."</li>
+        </ul>
+      </div>
+      <div class="sg-box">
+        <div class="sg-label">Reading Content</div>
+        <ul>
+          <li><strong>Words:</strong> pipi, caca, couche, lait, faim, dodo, pleure, propre, sale</li>
+          <li><strong>Speech:</strong> "Faim!" "Dodo!" "Pipi!" (1 word)</li>
+          <li><strong>UI labels:</strong> Nourrir, Laver, Dormir, Couche</li>
+          <li><strong>Format:</strong> 1 word at a time, always with picture + audio</li>
+          <li><strong>Fun factor:</strong> "Caca" is inherently hilarious to a 6-year-old. Lean into this HARD.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="hl">
+      <h4>🚽 The Potty Training Mini-Game</h4>
+      <p>This is the signature mechanic of Stage 1. The Bébête's face scrunches up and it starts squirming. A speech bubble says "Pipi!" or "Caca!" Carmen has a few seconds to tap the toilet. Success: triumphant fanfare, confetti, Bébête does a happy dance on the toilet. Fail: the diaper appears, dirty. TRACK SUCCESSES. Each success fills a "Potty Progress" meter. When it's full, the Bébête graduates from diapers → Stage 2. This gives Carmen a clear, satisfying goal.</p>
+    </div>
+  </div>
+
+  <!-- STAGE 2 -->
+  <div class="stage s2">
+    <div class="stage-head">
+      <span class="stage-icon">🚶</span>
+      <div class="stage-info">
+        <h4>Stage 2: Le Petit</h4>
+        <div class="stage-sub">Walking, talking toddler · No more diapers! <span class="reading-tag rt-c">Level C–D</span></div>
+      </div>
+    </div>
+    <p>The Bébête is bigger, can waddle around, and starts talking in short phrases. The diaper mechanic is GONE (huge relief/satisfaction). Now it can walk to the toilet on its own (with encouragement). New mechanic: the Bébête can follow simple instructions, which means Carmen gives commands by reading them.</p>
+    <div class="stage-grid">
+      <div class="sg-box">
+        <div class="sg-label">Care Mechanics</div>
+        <ul>
+          <li><strong>Self-feeding</strong> — Bébête tries to feed itself (messily). Carmen picks the food.</li>
+          <li><strong>Bath time</strong> — interactive scrubbing (from v3), but now with a rubber duck toy.</li>
+          <li><strong>Walking practice</strong> — tap to encourage wobbly steps. Bébête falls, gets up, tries again.</li>
+          <li><strong>First words</strong> — Bébête tries to say words. Carmen picks the right picture for what it's trying to say.</li>
+          <li><strong>Simple commands</strong> — "Viens ici!" "Assieds-toi!" Carmen reads and taps.</li>
+        </ul>
+      </div>
+      <div class="sg-box">
+        <div class="sg-label">Reading Content</div>
+        <ul>
+          <li><strong>Words:</strong> viens, assieds, mange, bois, donne, regarde, touche</li>
+          <li><strong>Speech:</strong> "Je veux manger." "C'est à moi!" (3–4 words)</li>
+          <li><strong>New mechanic:</strong> Bébête tries to say a word, gets it wrong. Carmen picks the right word from 2–3 options.</li>
+          <li><strong>Expeditions unlock</strong> — Jardin Magique available for supply runs.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- STAGE 3 -->
+  <div class="stage s3">
+    <div class="stage-head">
+      <span class="stage-icon">🧒</span>
+      <div class="stage-info">
+        <h4>Stage 3: L'Enfant</h4>
+        <div class="stage-sub">Curious kid · Carmen becomes the teacher <span class="reading-tag rt-d">Level D</span></div>
+      </div>
+    </div>
+    <p>The Bébête is a full-sized kid now and is CURIOUS about everything. It asks "Pourquoi?" constantly. Carmen's role shifts from caretaker to TEACHER. She teaches it colors, numbers, animals, body parts — by reading the French words and matching them to pictures. The Bébête "learns" what Carmen teaches it.</p>
+    <div class="stage-grid">
+      <div class="sg-box">
+        <div class="sg-label">Care → Teaching Mechanics</div>
+        <ul>
+          <li><strong>Teaching colors</strong> — "Montre-moi le rouge." Carmen taps the red item.</li>
+          <li><strong>Teaching animals</strong> — Bébête sees a picture: "Qu'est-ce que c'est?" Carmen reads the name.</li>
+          <li><strong>Teaching numbers</strong> — "Donne-moi trois pommes." Carmen drags the right count.</li>
+          <li><strong>Dress-up</strong> — Bébête wants to pick outfits. Labels are in French.</li>
+          <li><strong>Cooking together</strong> — simple 2–3 step recipes. Bébête "helps."</li>
+        </ul>
+      </div>
+      <div class="sg-box">
+        <div class="sg-label">Reading Content</div>
+        <ul>
+          <li><strong>Sentences:</strong> "Montre-moi le bleu." "Donne-moi deux fraises." (5–7 words)</li>
+          <li><strong>Bébête speech:</strong> "Pourquoi le ciel est bleu?" "C'est quoi, un papillon?"</li>
+          <li><strong>Carmen reads TO the Bébête</strong> — short stories (3–4 sentences) at bedtime. This inverts the power dynamic: she's the reader, it's the listener.</li>
+          <li><strong>New biome:</strong> Village des Marchands (more complex shopping).</li>
+        </ul>
+      </div>
+    </div>
+    <div class="hl gold">
+      <h4>💡 The Teaching Inversion</h4>
+      <p>This is the pedagogical masterstroke. Carmen doesn't realize she's practicing reading — she thinks she's TEACHING her Bébête. "Show it the blue one" means SHE reads "bleu" to succeed. "Read it a bedtime story" means SHE reads a paragraph in French. Teaching is the most powerful form of learning, and the game makes her the teacher.</p>
+    </div>
+  </div>
+
+  <!-- STAGE 4 -->
+  <div class="stage s4">
+    <div class="stage-head">
+      <span class="stage-icon">💑</span>
+      <div class="stage-info">
+        <h4>Stage 4: La Famille</h4>
+        <div class="stage-sub">The Bébête finds a partner · BABIES arrive <span class="reading-tag rt-d">Level D–E</span></div>
+      </div>
+    </div>
+    <p>The original Bébête is now grown enough to have its own partner (a different-colored Bébête arrives). They have BABIES — 2–3 tiny new Bébêtes. Suddenly Carmen is managing a FAMILY. The original Bébête helps with the babies (it learned from Carmen!), but Carmen still oversees everything. The house gets crowded. She needs to build more space.</p>
+    <div class="stage-grid">
+      <div class="sg-box">
+        <div class="sg-label">New Mechanics</div>
+        <ul>
+          <li><strong>Baby management</strong> — multiple Bébêtes with individual needs. Simple delegation: tap a baby, pick a care action.</li>
+          <li><strong>The original helps!</strong> — it feeds babies, changes diapers (callback to Stage 1!). But Carmen must READ instructions for what each baby needs.</li>
+          <li><strong>Building</strong> — first construction: expand the house. Read blueprint instructions.</li>
+          <li><strong>Resource management</strong> — more mouths = more food needed = more expeditions.</li>
+        </ul>
+      </div>
+      <div class="sg-box">
+        <div class="sg-label">Reading Content</div>
+        <ul>
+          <li><strong>Sentences:</strong> "Le petit bébé a faim. Donne-lui du lait." (7–8 words)</li>
+          <li><strong>Blueprints:</strong> "D'abord, mets les murs. Ensuite, ajoute le toit." (Sequencing!)</li>
+          <li><strong>Multi-character dialogue:</strong> Bébêtes talk to each other. Carmen reads conversations.</li>
+          <li><strong>Emotional complexity:</strong> "Le bébé pleure parce qu'il est fatigué." (Causal reading)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- STAGE 5 -->
+  <div class="stage s5">
+    <div class="stage-head">
+      <span class="stage-icon">🏘️</span>
+      <div class="stage-info">
+        <h4>Stage 5: Le Village</h4>
+        <div class="stage-sub">Colony grows · Building a community <span class="reading-tag rt-e">Level E</span></div>
+      </div>
+    </div>
+    <p>The babies grow up. More families form. Now there are 8–12 Bébêtes in the backyard. Carmen's role shifts from parent to MAYOR. She builds houses, a school, a market, a farm. Each building has a French sign. Each Bébête has a job (boulanger, fermier, professeur). The backyard starts transforming.</p>
+    <div class="stage-grid">
+      <div class="sg-box">
+        <div class="sg-label">Village Mechanics</div>
+        <ul>
+          <li><strong>Building placement</strong> — drag buildings onto the backyard grid. Read building descriptions to know what they do.</li>
+          <li><strong>Job assignment</strong> — each Bébête has preferences. Read their profile: "J'aime les fleurs. Je veux être fermier."</li>
+          <li><strong>Village problems</strong> — "Il n'y a pas assez de nourriture!" Carmen reads the problem and decides what to build or farm.</li>
+          <li><strong>School building</strong> — teaches the next generation. Carmen creates "lessons" by picking words.</li>
+          <li><strong>Market economy</strong> — Bébêtes trade with each other. Carmen reads trade offers.</li>
+        </ul>
+      </div>
+      <div class="sg-box">
+        <div class="sg-label">Reading Content</div>
+        <ul>
+          <li><strong>Signs:</strong> "Boulangerie — Pain frais chaque jour!" (8+ word descriptions)</li>
+          <li><strong>Profiles:</strong> "Je m'appelle Fleur. J'ai trois ans. J'aime les papillons et le chocolat."</li>
+          <li><strong>Problems:</strong> "Le village n'a pas assez d'eau. Il faut construire un puits." (Problem → solution reading)</li>
+          <li><strong>Dialogue:</strong> Multi-sentence NPC conversations.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- STAGE 6 -->
+  <div class="stage s6">
+    <div class="stage-head">
+      <span class="stage-icon">🔬</span>
+      <div class="stage-info">
+        <h4>Stage 6: La Science</h4>
+        <div class="stage-sub">Research & discovery · Understanding the land <span class="reading-tag rt-e">Level E–F</span></div>
+      </div>
+    </div>
+    <p>The village is stable, but the backyard soil is limited. The Bébêtes build a research lab. Carmen discovers that the rest of the backyard is "barren" — rocky, dry, lifeless. The Bébête scientists write research reports (in French!) about soil, water, and plants. Carmen reads the research to unlock terraforming technologies.</p>
+    <div class="stage-grid">
+      <div class="sg-box">
+        <div class="sg-label">Science Mechanics</div>
+        <ul>
+          <li><strong>Research lab</strong> — Bébête scientists conduct experiments. Carmen reads results.</li>
+          <li><strong>Soil analysis</strong> — "La terre est trop sèche. Il faut ajouter de l'eau et du compost."</li>
+          <li><strong>Plant experiments</strong> — try growing different plants. Read which conditions they need.</li>
+          <li><strong>Weather observation</strong> — "Demain, il va pleuvoir. C'est bon pour le jardin!"</li>
+          <li><strong>Invention</strong> — Bébêtes invent tools. Carmen reads blueprints to build them.</li>
+        </ul>
+      </div>
+      <div class="sg-box">
+        <div class="sg-label">Reading Content</div>
+        <ul>
+          <li><strong>Research reports:</strong> 3–4 sentence paragraphs with scientific vocabulary adapted for kids.</li>
+          <li><strong>Instructions:</strong> Complex multi-step blueprints with sequencing words.</li>
+          <li><strong>Cause & effect:</strong> "Si tu ajoutes de l'eau, les plantes vont pousser."</li>
+          <li><strong>New vocabulary:</strong> terre, eau, soleil, graine, pousser, racine, feuille, compost</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- STAGE 7 -->
+  <div class="stage s7">
+    <div class="stage-head">
+      <span class="stage-icon">🌍</span>
+      <div class="stage-info">
+        <h4>Stage 7: Terraformer</h4>
+        <div class="stage-sub">Transform the wasteland · Build a world <span class="reading-tag rt-f">Level F</span></div>
+      </div>
+    </div>
+    <p>The final act. Carmen uses everything she's learned — the research, the resources, the colony — to TERRAFORM the barren sections of the backyard into living, thriving ecosystems. She places soil, channels water, plants seeds, and watches forests and meadows grow. The Bébête colony expands into the new territory. The backyard becomes a lush micro-civilization.</p>
+    <div class="stage-grid">
+      <div class="sg-box">
+        <div class="sg-label">Terraforming Mechanics</div>
+        <ul>
+          <li><strong>Terrain painting</strong> — drag to place soil, water, grass on the barren grid.</li>
+          <li><strong>Ecosystem balance</strong> — read indicators: "Les plantes ont besoin de plus d'eau."</li>
+          <li><strong>Colony expansion</strong> — Bébêtes move into new zones. Build new buildings.</li>
+          <li><strong>Seasons</strong> — the terraform reacts to seasons. Carmen reads seasonal reports.</li>
+          <li><strong>The Grand Finale</strong> — the entire backyard is green, the colony is thriving, Bébêtes celebrate. The original Bébête — now an elder — thanks Carmen in a full paragraph of French.</li>
+        </ul>
+      </div>
+      <div class="sg-box">
+        <div class="sg-label">Reading Content</div>
+        <ul>
+          <li><strong>Complex instructions:</strong> "D'abord, vérifie que la terre est prête. Ensuite, plante les graines. Puis, ajoute de l'eau chaque jour. Finalement, attends que les plantes poussent."</li>
+          <li><strong>Full paragraphs:</strong> Ecosystem reports, colony newsletters, elder speeches.</li>
+          <li><strong>Inference required:</strong> "Les fleurs ne poussent pas. Qu'est-ce qui manque?" (Carmen figures out it needs more water)</li>
+          <li><strong>Emotional payoff:</strong> The original Bébête's final speech — a full paragraph thanking Carmen for everything, from diapers to terraforming.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="hl">
+      <h4>🎬 The Final Speech</h4>
+      <p>When the terraforming is complete, the original Bébête — now old and wise — gathers the entire colony. It delivers a speech in French that references EVERY stage Carmen went through: "Tu m'as changé les couches quand j'étais petit. Tu m'as appris les couleurs. Tu m'as aidé avec mes bébés. Tu as construit notre village. Tu as transformé notre monde. Merci, mon amie. Merci pour tout." Carmen has to READ this entire paragraph — the final reading challenge — and it will make her cry because she remembers every moment. This is the emotional payoff of the entire game.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ====== READING PROGRESSION ====== -->
+<section>
+  <h2><span class="n">◆</span> Reading Progression Map</h2>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <h4>Stage 1–2: Survival Words <span class="reading-tag rt-c">C</span></h4>
+      <p>1-word commands and labels. "Pipi!" "Faim!" "Couche!" Picture + audio on everything. Carmen reads to survive (keep the Bébête alive).</p>
+    </div>
+    <div class="tl-item">
+      <h4>Stage 2–3: Simple Phrases <span class="reading-tag rt-c">C–D</span></h4>
+      <p>3–5 word phrases. "Je veux manger." "Donne-moi le bleu." Carmen reads to teach (show the Bébête what things are called).</p>
+    </div>
+    <div class="tl-item">
+      <h4>Stage 3–4: Teaching Sentences <span class="reading-tag rt-d">D</span></h4>
+      <p>5–8 word sentences. "Montre-moi trois pommes rouges." "Le bébé pleure parce qu'il a faim." Carmen reads to nurture (manage a family).</p>
+    </div>
+    <div class="tl-item">
+      <h4>Stage 4–5: Multi-Sentence Reading <span class="reading-tag rt-d">D–E</span></h4>
+      <p>Multiple sentences in sequence. Building blueprints, dialogue, problem descriptions. Carmen reads to build (construct a village).</p>
+    </div>
+    <div class="tl-item">
+      <h4>Stage 5–6: Paragraph Reading <span class="reading-tag rt-e">E</span></h4>
+      <p>3–4 sentence paragraphs. Village signs, character profiles, research reports. Carmen reads to govern (make decisions for the colony).</p>
+    </div>
+    <div class="tl-item">
+      <h4>Stage 6–7: Complex Paragraphs <span class="reading-tag rt-e">E–F</span></h4>
+      <p>Full paragraphs with cause-effect, conditionals, sequencing. Research reports, ecosystem data. Carmen reads to discover (understand science).</p>
+    </div>
+    <div class="tl-item">
+      <h4>Stage 7: Full Text <span class="reading-tag rt-f">F</span></h4>
+      <p>Multi-paragraph text. The elder Bébête's final speech. Terraforming manuals. Colony newsletters. Carmen reads because she CAN — she's at Level F.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ====== COLONY GROWTH ====== -->
+<section>
+  <h2><span class="n">◆</span> Colony Growth Visual</h2>
+  <p>The backyard transforms visually across all 7 stages. Carmen can zoom out at any time to see the full picture — this gives her a sense of scale and progress.</p>
+
+  <div class="stage-grid">
+    <div class="sg-box"><div class="sg-label">Stage 1–2</div><p style="font-size:13px;">Tiny corner: one Bébête, a blanket, a bottle. Bare grass.</p></div>
+    <div class="sg-box"><div class="sg-label">Stage 3</div><p style="font-size:13px;">Small house appears. Bébête's yard with a few flowers and a toy.</p></div>
+    <div class="sg-box"><div class="sg-label">Stage 4</div><p style="font-size:13px;">House expands. Baby cribs. A small garden. 4–5 Bébêtes visible.</p></div>
+    <div class="sg-box"><div class="sg-label">Stage 5</div><p style="font-size:13px;">Village core: 6–8 buildings, market, school, farm. 10+ Bébêtes walking around.</p></div>
+    <div class="sg-box"><div class="sg-label">Stage 6</div><p style="font-size:13px;">Research lab, greenhouse, weather station. Half the backyard is developed. Barren wasteland visible at the edges.</p></div>
+    <div class="sg-box"><div class="sg-label">Stage 7</div><p style="font-size:13px;">Full backyard: green everywhere, streams, forests, farms, buildings. 20+ Bébêtes. The wasteland is transformed. Beautiful.</p></div>
+  </div>
+</section>
+
+<!-- ====== POTTY MECHANIC ====== -->
+<section>
+  <h2><span class="n">◆</span> The Potty Training Deep-Dive</h2>
+  <p>This deserves its own section because it's the signature mechanic of the early game and the thing Carmen will tell her friends about.</p>
+
+  <h3>How It Works</h3>
+  <p>The Bébête has a hidden "potty timer" — every 30–60 seconds, it needs to go. The TELLS are visual:</p>
+
+  <div class="stage-grid">
+    <div class="sg-box">
+      <div class="sg-label">Visual Tells (Escalating)</div>
+      <ul>
+        <li><strong>Level 1:</strong> Bébête starts squirming. Subtle wiggle animation.</li>
+        <li><strong>Level 2:</strong> Face scrunches up. Cheeks go red. Legs cross.</li>
+        <li><strong>Level 3:</strong> Speech bubble: "Pipi!" or "Caca!" (reading required!)</li>
+        <li><strong>Level 4:</strong> Bébête is HOPPING. Urgent. This is the last chance.</li>
+        <li><strong>Too late:</strong> Sad face. Diaper appears. Bébête looks embarrassed (not ashamed — it's funny, not punishing).</li>
+      </ul>
+    </div>
+    <div class="sg-box">
+      <div class="sg-label">Success Sequence</div>
+      <ul>
+        <li>Carmen taps toilet icon (or drags Bébête to toilet)</li>
+        <li>Bébête waddles to toilet with a relieved face</li>
+        <li>Sits on toilet. Funny "plop" sound.</li>
+        <li>TRIUMPHANT FANFARE. Confetti. Bébête claps.</li>
+        <li>Speech bubble: "Bravo!" "Je suis grand!" "Pas de couche!"</li>
+        <li>Potty Progress meter fills up a notch.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="hl gold">
+    <h4>🏆 The Diaper Graduation Ceremony</h4>
+    <p>When the Potty Progress meter is FULL (maybe 15–20 successes), there's a celebration cutscene: the Bébête takes off its diaper, throws it in the air, does a victory dance. Confetti EVERYWHERE. The diaper flies offscreen and never comes back. Carmen gets a "Pas de couche!" achievement badge. The Bébête is visibly bigger now — it evolved to Stage 2. This is the most satisfying moment in the early game.</p>
+  </div>
+</section>
+
+<!-- ====== WHY IT WORKS ====== -->
+<section>
+  <h2><span class="n">◆</span> Why This Arc Works Pedagogically</h2>
+
+  <div class="stage-grid">
+    <div class="sg-box">
+      <div class="sg-label">Emotional Stakes Scale With Reading</div>
+      <ul>
+        <li>Stage 1: "I need to read 'pipi' or my Bébête will poop itself" (hilarious urgency)</li>
+        <li>Stage 3: "I need to read 'bleu' to teach my Bébête colors" (nurture motivation)</li>
+        <li>Stage 5: "I need to read this sign to build a bakery" (builder pride)</li>
+        <li>Stage 7: "I need to read this report to terraform the land" (world-shaper ambition)</li>
+      </ul>
+    </div>
+    <div class="sg-box">
+      <div class="sg-label">Carmen's Role Evolves</div>
+      <ul>
+        <li>Stages 1–2: <strong>Parent</strong> (keeping it alive)</li>
+        <li>Stage 3: <strong>Teacher</strong> (teaching it words)</li>
+        <li>Stage 4: <strong>Family manager</strong> (handling multiple creatures)</li>
+        <li>Stage 5: <strong>Mayor</strong> (governing a community)</li>
+        <li>Stage 6: <strong>Scientist</strong> (understanding the world)</li>
+        <li>Stage 7: <strong>Terraformer</strong> (reshaping the world)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="hl">
+    <h4>🎯 The Escalire Mapping</h4>
+    <p>Stages 1–2 cover Escalire Level C (where Carmen is now). Stages 3–4 bring her through Level D. Stages 5–6 tackle Level E. Stage 7 is Level F — the target. But she never sees any of that. She just sees her Bébête colony growing. By the time she's reading full paragraphs to terraform land, she's at Level F without ever having been told she was "practicing reading."</p>
+  </div>
+</section>
+
+<!-- ====== BUILD PLAN ====== -->
+<section>
+  <h2><span class="n">◆</span> Build Priorities</h2>
+  <p>We don't need all 7 stages on day one. We build Stage 1 first, make it incredible, and layer stages on top.</p>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <h4>Sprint 1: Stage 1 — Le Bébé (the potty game)</h4>
+      <p>Canvas Bébête with diaper, feeding, potty timing mini-game, sleeping, crying. The potty progress meter. Diaper graduation cutscene. This alone is a complete, playable, hilarious game.</p>
+    </div>
+    <div class="tl-item">
+      <h4>Sprint 2: Stage 2 — Le Petit + Expeditions</h4>
+      <p>Post-diaper gameplay: walking, bath scrubbing, first words, simple commands. The Jardin Magique expedition for supply runs. Teaching mini-game.</p>
+    </div>
+    <div class="tl-item">
+      <h4>Sprint 3: Stage 3 — L'Enfant (teaching mode)</h4>
+      <p>Color/number/animal teaching games. Bedtime story reading. Dress-up. Village marketplace expedition.</p>
+    </div>
+    <div class="tl-item">
+      <h4>Sprint 4+: Stages 4–7 (colony growth)</h4>
+      <p>Baby arrival, family management, village building, research, terraforming. Each sprint adds a stage.</p>
+    </div>
+  </div>
+</section>
+
+<div class="footer">
+  <p><strong>Petit Monde</strong> — Diapers to Terraforming · Full Arc Design v2.0</p>
+  <p>For Carmen Steeves, age 6 · Escalire C → F · March 2026</p>
+  <p style="margin-top:6px;">Tyler & Claude</p>
+</div>
+
+</div>
+</body>
+</html>
