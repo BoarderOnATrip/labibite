@@ -100,7 +100,7 @@ body{background:var(--wall);}
 .nd{
   display:flex;flex-direction:column;align-items:center;gap:2px;
   background:rgba(255,255,255,.8);backdrop-filter:blur(6px);
-  border-radius:14px;padding:5px 4px 4px;width:38px;
+  border-radius:14px;padding:6px 5px 5px;width:44px;min-height:92px;
   border:2px solid transparent;transition:border-color .3s,box-shadow .3s;
   cursor:pointer;position:relative;
 }
@@ -130,13 +130,18 @@ body{background:var(--wall);}
 .nd-fill.joie.warn{background:linear-gradient(0deg,#FF8800,var(--gold));}
 .nd-fill.propre.warn{background:linear-gradient(0deg,#5599CC,var(--blue));}
 .nd-fill.energie.warn{background:linear-gradient(0deg,#7755BB,var(--lav));}
-.nd-lbl{font-family:'Fredoka';font-size:7px;color:var(--mid);letter-spacing:-.3px;}
+.nd-lbl{font-family:'Fredoka';font-size:9px;color:var(--mid);letter-spacing:-.2px;line-height:1.1;text-align:center;}
 
 .room-hud{
   position:absolute;top:10px;right:10px;z-index:12;
   display:flex;flex-direction:column;align-items:flex-end;gap:8px;
   width:min(46vw,230px);
 }
+.hud-parent{
+  position:absolute;top:-8px;right:-8px;z-index:2;width:46px;height:46px;border:none;border-radius:16px;
+  background:rgba(255,255,255,.92);box-shadow:var(--shadow);font-size:22px;cursor:pointer;
+}
+.hud-parent:active{transform:scale(.95);}
 .hud-card,.traits-card{
   width:100%;
   background:rgba(255,255,255,.82);backdrop-filter:blur(10px);
@@ -239,14 +244,14 @@ body{background:var(--wall);}
   position:absolute;bottom:28%;z-index:3;
   display:flex;flex-direction:column;align-items:center;
   cursor:pointer;transition:transform .15s;
-  transform:translateX(-50%);
+  transform:translateX(-50%);padding:8px 6px;min-width:56px;
 }
 .furn:active{transform:translateX(-50%) scale(.92);}
 .furn-icon{font-size:52px;display:block;transition:transform .2s,filter .2s;line-height:1.1;min-height:58px;will-change:transform,filter;}
 .furn-label{
-  font-family:'Fredoka';font-size:10px;color:var(--mid);
+  font-family:'Fredoka';font-size:12px;color:var(--mid);
   background:rgba(255,255,255,.75);padding:1px 7px;border-radius:6px;
-  margin-top:0;white-space:nowrap;
+  margin-top:0;white-space:normal;line-height:1.1;max-width:72px;text-align:center;
 }
 .furn-shadow{
   width:50px;height:8px;background:radial-gradient(ellipse,rgba(0,0,0,.1),transparent);
@@ -412,11 +417,11 @@ body{background:var(--wall);}
 .bubble{
   position:absolute;bottom:calc(100% + 15px);left:0;transform:translateX(-50%);
   background:var(--white);border-radius:22px;padding:12px 18px;
-  box-shadow:var(--shadow);max-width:260px;min-width:80px;
+  box-shadow:var(--shadow);max-width:min(72vw,320px);min-width:80px;
   font-family:'Nunito';font-size:20px;font-weight:700;
   color:var(--dark);text-align:center;line-height:1.4;
   cursor:pointer;animation:bub-in .4s ease-out;z-index:12;
-  white-space:nowrap;
+  white-space:normal;
 }
 .bubble.urgent-bubble{background:#FFF0F0;border:2px solid var(--coral);animation:bub-in .3s ease-out,bub-shake .4s ease infinite;}
 @keyframes bub-shake{0%,100%{transform:translateX(-50%) rotate(0)}25%{transform:translateX(-50%) rotate(-2deg)}75%{transform:translateX(-50%) rotate(2deg)}}
@@ -446,19 +451,60 @@ body{background:var(--wall);}
 }
 @keyframes tutorial-arrow{0%,100%{transform:translate(-50%,-50%) translateY(0)}50%{transform:translate(-50%,-50%) translateY(10px)}}
 
+.story-ov{
+  position:fixed;inset:0;z-index:34;display:none;align-items:flex-end;justify-content:center;
+  padding:18px 16px calc(20px + env(safe-area-inset-bottom));background:linear-gradient(180deg,rgba(45,39,64,.06),rgba(45,39,64,.28));
+}
+.story-card{
+  width:min(100%,430px);background:rgba(255,255,255,.97);border-radius:28px;padding:18px 18px 16px;
+  box-shadow:var(--shadow-lg);display:flex;flex-direction:column;gap:12px;animation:rpop .25s ease;max-height:min(84vh,760px);overflow:auto;
+}
+.story-top{display:flex;align-items:center;gap:12px;padding-right:30px;}
+.story-badge{
+  width:56px;height:56px;border-radius:18px;background:rgba(255,244,214,.95);display:flex;align-items:center;justify-content:center;
+  font-size:34px;box-shadow:inset 0 0 0 2px rgba(255,217,61,.22);
+}
+.story-kicker{font-family:'Fredoka';font-size:12px;color:var(--mint);text-transform:uppercase;letter-spacing:.06em;}
+.story-title{font-family:'Fredoka';font-size:24px;color:var(--dark);line-height:1.1;}
+.story-progress{font-size:12px;color:var(--mid);margin-top:3px;}
+.story-body{
+  min-height:138px;border-radius:20px;padding:16px 18px;background:rgba(78,205,196,.08);
+  font-size:21px;font-weight:800;line-height:1.55;color:var(--dark);
+}
+.story-hint{font-size:12px;color:var(--mid);text-align:center;}
+.story-choices{display:grid;grid-template-columns:1fr;gap:8px;}
+.story-choice{
+  min-height:54px;border:none;border-radius:18px;background:var(--white);box-shadow:var(--shadow);cursor:pointer;
+  font-family:'Fredoka';font-size:16px;color:var(--dark);padding:12px 14px;text-align:left;transition:transform .15s,border-color .15s,background .15s;
+  border:2px solid transparent;
+}
+.story-choice:active,.story-next:active,.story-skip:active{transform:scale(.97);}
+.story-choice.correct{border-color:var(--green);background:rgba(129,199,132,.16);}
+.story-choice.wrong{border-color:var(--coral);background:rgba(255,107,107,.12);}
+.story-result{
+  min-height:48px;border-radius:16px;padding:12px 14px;background:rgba(255,244,214,.92);
+  font-size:14px;font-weight:700;color:var(--dark);line-height:1.45;
+}
+.story-actions{display:flex;gap:10px;align-items:center;}
+.story-skip,.story-next{
+  min-height:48px;border:none;border-radius:16px;cursor:pointer;font-family:'Fredoka';font-size:15px;
+}
+.story-skip{padding:0 16px;background:rgba(0,0,0,.06);color:var(--mid);}
+.story-next{flex:1;padding:0 18px;background:var(--mint);color:#fff;box-shadow:var(--shadow);}
+
 /* ===== ROOM DIM (sleep) ===== */
 .room-dim{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(20,15,40,.45);z-index:8;pointer-events:none;opacity:0;transition:opacity .6s ease;display:flex;align-items:center;justify-content:center;}
 .room-dim.show{opacity:1;pointer-events:auto;cursor:pointer;}
 .room-dim .dim-txt{font-family:'Fredoka';font-size:28px;color:rgba(255,255,255,.7);animation:tfloat 3s ease-in-out infinite;pointer-events:none;}
 
 /* ===== SPOT PICKER (food/toy) ===== */
-.spot-backdrop{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.12);z-index:24;display:none;}
+.spot-backdrop{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.12);z-index:24;display:none;}
 .spot-panel{
-  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
   background:var(--white);border-radius:22px;padding:16px 18px;
   box-shadow:var(--shadow-lg);z-index:25;
   display:none;flex-direction:column;align-items:center;gap:10px;
-  animation:rpop .3s ease;min-width:180px;max-width:min(92vw,560px);
+  animation:rpop .3s ease;min-width:180px;max-width:min(92vw,560px);max-height:min(84vh,760px);overflow:auto;
 }
 .sp-title{font-family:'Fredoka';font-size:16px;color:var(--dark);}
 .sp-items{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
@@ -480,11 +526,44 @@ body{background:var(--wall);}
 .wd-tabs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:10px;}
 .wd-tab{
   border:none;border-radius:999px;padding:8px 12px;background:rgba(0,0,0,.05);
-  font-family:'Fredoka';font-size:12px;color:var(--dark);cursor:pointer;min-height:40px;
+  font-family:'Fredoka';font-size:12px;color:var(--dark);cursor:pointer;min-height:48px;
 }
 .wd-tab.on{background:var(--mint);color:#fff;}
 .wd-grid{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
 .sp-action{margin-top:12px;min-height:44px;}
+
+.mini-wrap{display:flex;flex-direction:column;gap:12px;width:min(92vw,430px);}
+.mini-card{background:rgba(255,255,255,.9);border-radius:20px;padding:16px;box-shadow:var(--shadow);text-align:center;}
+.mini-progress{font-family:'Fredoka';font-size:12px;color:var(--mint);text-transform:uppercase;letter-spacing:.06em;}
+.mini-emoji{font-size:54px;line-height:1;}
+.mini-prompt{font-family:'Fredoka';font-size:22px;color:var(--dark);line-height:1.25;margin-top:6px;}
+.mini-sub{font-size:13px;color:var(--mid);line-height:1.4;}
+.mini-choices{display:grid;grid-template-columns:1fr;gap:8px;width:100%;}
+.mini-choice{
+  min-height:52px;border:none;border-radius:18px;background:var(--white);box-shadow:var(--shadow);cursor:pointer;
+  font-family:'Fredoka';font-size:16px;color:var(--dark);padding:12px 14px;text-align:center;transition:transform .15s,border-color .15s,background .15s;
+  border:2px solid transparent;
+}
+.mini-choice:active,.mini-next:active{transform:scale(.97);}
+.mini-choice.good{border-color:var(--green);background:rgba(129,199,132,.16);}
+.mini-choice.bad{border-color:var(--coral);background:rgba(255,107,107,.12);}
+.mini-feedback{font-size:14px;font-weight:700;color:var(--dark);min-height:18px;}
+.mini-next{
+  min-height:48px;border:none;border-radius:16px;background:var(--mint);color:#fff;
+  font-family:'Fredoka';font-size:15px;cursor:pointer;box-shadow:var(--shadow);padding:0 18px;
+}
+.mini-seq{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;font-size:42px;margin:6px 0;}
+.mini-missing{display:inline-flex;align-items:center;justify-content:center;min-width:52px;padding:0 10px;border-bottom:4px solid var(--gold);}
+.mini-sentence{font-size:22px;font-weight:800;line-height:1.55;color:var(--dark);}
+.mini-blank{display:inline-flex;align-items:center;justify-content:center;min-width:88px;padding:0 10px;border-bottom:4px solid var(--mint);}
+.mini-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}
+.mini-grid .mini-choice{text-align:left;}
+.mini-count-grid{
+  display:flex;flex-wrap:wrap;justify-content:center;gap:8px;min-height:110px;
+  padding:10px 8px;border-radius:18px;background:rgba(255,244,214,.5);
+}
+.mini-count-obj{font-size:28px;line-height:1;}
+.mini-summary{font-size:15px;color:var(--dark);line-height:1.45;}
 
 /* ===== EVENT CARD ===== */
 .event-card{
@@ -519,7 +598,7 @@ body{background:var(--wall);}
 @keyframes exped-glow{0%,100%{box-shadow:0 4px 16px rgba(45,39,64,.1)}50%{box-shadow:0 10px 24px rgba(129,199,132,.35)}}
 
 /* ===== TOAST ===== */
-.toast{position:fixed;top:-80px;left:50%;transform:translateX(-50%);z-index:50;background:linear-gradient(135deg,var(--gold),#FFB347);border-radius:16px;padding:10px 20px;box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:10px;transition:top .4s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;}
+.toast{position:fixed;top:-80px;left:50%;transform:translateX(-50%);z-index:50;background:linear-gradient(135deg,var(--gold),#FFB347);border-radius:16px;padding:10px 20px;box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:10px;transition:top .4s cubic-bezier(.34,1.56,.64,1);white-space:normal;max-width:min(86vw,420px);text-align:center;}
 .toast.show{top:20px;}
 .toast-icon{font-size:24px;}.toast-text{font-family:'Fredoka';font-size:15px;color:var(--dark);font-weight:600;}
 
@@ -560,10 +639,11 @@ body{background:var(--wall);}
   padding:8px 12px;border:2px solid rgba(0,0,0,.08);border-radius:14px;
   background:rgba(255,255,255,.8);cursor:pointer;transition:all .15s;
   font-family:'Fredoka';font-size:13px;color:var(--dark);
-  display:flex;align-items:center;gap:4px;
+  display:flex;align-items:center;gap:4px;min-height:48px;
 }
 .pace-btn:active{transform:scale(.95);}
 .pace-btn.active{border-color:var(--mint);background:rgba(78,205,196,.12);box-shadow:0 0 0 2px rgba(78,205,196,.15);}
+button,.furn,.sp-item,.mini-choice,.mini-next,.wd-tab,.pace-btn,.btn-bar,.mcell,.mitm,.collect-btn,.collect-item,.story-choice,.story-next,.story-skip{touch-action:manipulation;}
 
 @media (min-width:768px){
   .season-label{font-size:11px;padding:3px 10px;}
@@ -740,6 +820,13 @@ body{background:var(--wall);}
   .sp-icon{font-size:38px;}
   .sp-name{font-size:13px;}
   .sp-sub{font-size:11px;max-width:110px;}
+  .mini-card{padding:18px;}
+  .mini-prompt{font-size:24px;}
+  .mini-choice{font-size:17px;min-height:58px;}
+  .mini-count-obj{font-size:32px;}
+  .story-card{max-width:490px;padding:22px 22px 18px;}
+  .story-title{font-size:28px;}
+  .story-body{min-height:152px;font-size:24px;}
   .wd-tab{font-size:13px;padding:9px 14px;}
   .topb{padding:14px 20px;}
   .topb h2{font-size:22px;}
@@ -800,6 +887,7 @@ body{background:var(--wall);}
       <div class="nd" id="nd-energie"><span class="nd-icon">💤</span><div class="nd-bar"><div class="nd-fill energie" id="nf-energie"></div></div><span class="nd-lbl">Énergie</span></div>
     </div>
     <div class="room-hud">
+      <button class="hud-parent" onclick="G.openDashboard()">👩‍🏫</button>
       <div class="hud-card avatar-card">
         <span class="hud-emoji" id="hud-avatar-emoji">🫧</span>
         <div>
@@ -894,6 +982,27 @@ body{background:var(--wall);}
 
     <!-- Overlays -->
     <div class="room-dim" id="room-dim"><div class="dim-txt">💤 Bonne nuit... 💤</div></div>
+    <div class="story-ov" id="story-ov">
+      <div class="story-card">
+        <button class="sp-close" onclick="G.skipStory()">✕</button>
+        <div class="story-top">
+          <div class="story-badge" id="story-badge">📖</div>
+          <div>
+            <div class="story-kicker">Lecture du soir</div>
+            <div class="story-title" id="story-title">Une histoire</div>
+            <div class="story-progress" id="story-progress">Page 1/3</div>
+          </div>
+        </div>
+        <div class="story-body" id="story-body">Le Bibit écoute une histoire.</div>
+        <div class="story-hint" id="story-hint">Touche un mot pour l'entendre 🔊</div>
+        <div class="story-choices" id="story-choices" style="display:none;"></div>
+        <div class="story-result" id="story-result" style="display:none;"></div>
+        <div class="story-actions">
+          <button class="story-skip" id="story-skip" onclick="G.skipStory()">Dormir</button>
+          <button class="story-next" id="story-next" onclick="G.advanceStory()">Suivant</button>
+        </div>
+      </div>
+    </div>
     <div class="tutorial-ov" id="tutorial-ov">
       <div class="tutorial-card">
         <div class="tutorial-step" id="tutorial-step">Petit guide</div>
@@ -953,6 +1062,22 @@ body{background:var(--wall);}
       <small id="dash-heard-note">Les mots s'ajoutent quand Carmen écoute ou touche un mot.</small>
     </div>
     <div class="dash-row">
+      <strong>Mots les plus fréquents</strong>
+      <div class="dash-list" id="dash-word-counts"></div>
+      <small>Chaque répétition est comptée pour montrer les mots vraiment travaillés.</small>
+    </div>
+    <div class="dash-row">
+      <strong>Lecture du soir</strong>
+      <div class="dash-list" id="dash-reading"></div>
+      <div class="dash-list" id="dash-reading-log" style="margin-top:8px;"></div>
+      <small id="dash-story-note">Les histoires du dodo travaillent le vocabulaire, la mémoire et la compréhension.</small>
+    </div>
+    <div class="dash-row">
+      <strong>Séances récentes</strong>
+      <div class="dash-list" id="dash-sessions"></div>
+      <small>Chaque activité importante laisse une trace simple pour la démonstration enseignante.</small>
+    </div>
+    <div class="dash-row">
       <strong>Avatar</strong>
       <div class="dash-list"><span class="dash-pill" id="dash-avatar">Le Copain 🫧</span></div>
       <small>Le style visuel, les phrases et le bonus de trait changent avec l'avatar choisi.</small>
@@ -991,6 +1116,8 @@ const G = {
     stats:{fed:0,washed:0,played:0,slept:0,pottyWin:0,pottyFail:0,events:0,exped:0},
     achievements:new Set(),
     points:0,playMs:0,dailyVisits:0,careCount:0,lastSeen:null,lastSaved:null,stageTeased:false,tutorialDone:false,tutorialStep:0,
+    reading:{stories:0,questions:0,correct:0,lastTitle:'',skipped:0,sessions:[],seenStoryIds:[],wordCounts:{}},
+    reports:{sessions:[]},
     pace:'normal', // 'turbo' | 'fast' | 'normal' | 'chill' | 'zen'
     avatar:'copain',
     avatarData:{
@@ -1244,6 +1371,73 @@ const G = {
       {icon:'❄️',text:'Il neige!',desc:'Touche les flocons!',taps:4,emoji:'❄️',reward:11},
       {icon:'🌈',text:'Un arc-en-ciel!',desc:'Les couleurs!',taps:1,emoji:'🌈',reward:12},
     ],
+    stories:[
+      {id:'chat-rouge',lvl:'C',emoji:'🐱',title:'Le chat rouge',pages:[
+        'Le chat dort dans le lit.',
+        'Le chat aime une balle rouge.',
+        'Carmen dit bonsoir au petit chat.'
+      ],question:{q:'De quelle couleur est la balle?',choices:['Rouge','Bleue','Verte'],a:0,ok:'Oui! La balle est rouge.',skill:'couleurs'}},
+      {id:'canard-bain',lvl:'C',emoji:'🦆',title:'Le canard du bain',pages:[
+        'Le petit canard joue dans le bain.',
+        'Il voit trois bulles qui montent.',
+        'Le canard rit et fait plouf.'
+      ],question:{q:'Combien de bulles monte dans le bain?',choices:['Une','Trois','Cinq'],a:1,ok:'Exact! Il voit trois bulles.',skill:'nombres'}},
+      {id:'tuque-vent',lvl:'C',emoji:'🧢',title:'La tuque dans le vent',pages:[
+        'Bibit met sa tuque bleue avant de sortir.',
+        'Le vent pousse la tuque vers la fenêtre.',
+        'Carmen rit et attrape vite la tuque.'
+      ],question:{q:'Quelle couleur a la tuque?',choices:['Bleue','Jaune','Rose'],a:0,ok:'Oui! La tuque est bleue.',skill:'vetements'}},
+      {id:'train-nuit',lvl:'C',emoji:'🚂',title:'Le train du soir',pages:[
+        'Le petit train roule doucement dans la chambre.',
+        'Il passe devant le lit et derrière la lampe.',
+        'Puis il s arrête près du livre de Bibit.'
+      ],question:{q:'Où le train s arrête-t-il?',choices:['Près du livre','Sous la chaise','Dans le bain'],a:0,ok:'Bravo! Le train s arrête près du livre.',skill:'position'}},
+      {id:'lapin-jardin',lvl:'D',emoji:'🐰',title:'Le lapin du jardin',pages:[
+        'Le lapin blanc court dans le jardin au printemps.',
+        'Il trouve une carotte orange près des fleurs roses.',
+        'Puis il saute derrière le pot pour la cacher.'
+      ],question:{q:'Où le lapin cache la carotte?',choices:['Sous le lit','Derrière le pot','Dans la baignoire'],a:1,ok:'Bravo! Il la cache derrière le pot.',skill:'position'}},
+      {id:'neige-bottes',lvl:'D',emoji:'❄️',title:'Les bottes de neige',pages:[
+        'En hiver, Bibit met ses bottes et son manteau.',
+        'Il marche dans la neige avec un grand sourire.',
+        'Ses bottes font crac crac sur la glace.'
+      ],question:{q:'Quelle saison est dans cette histoire?',choices:['L été','Le printemps','L hiver'],a:2,ok:'Oui! C est l hiver.',skill:'saisons'}},
+      {id:'marché-fraises',lvl:'D',emoji:'🍓',title:'Le marché des fraises',pages:[
+        'Bibit va au marché avec un petit panier.',
+        'Il choisit des fraises rouges et du fromage jaune.',
+        'Ensuite, il compte quatre pièces pour payer.'
+      ],question:{q:'Combien de pièces Bibit compte-t-il?',choices:['Deux','Quatre','Six'],a:1,ok:'Exact! Bibit compte quatre pièces.',skill:'nombres'}},
+      {id:'arc-ciel',lvl:'D',emoji:'🌈',title:'Les couleurs du ciel',pages:[
+        'Après la pluie, un arc-en-ciel apparaît par la fenêtre.',
+        'Bibit nomme le rouge, le jaune et le bleu.',
+        'Puis il peint un grand ciel sur sa feuille.'
+      ],question:{q:'Que fait Bibit après avoir nommé les couleurs?',choices:['Il dort','Il peint','Il mange'],a:1,ok:'Oui! Bibit peint un grand ciel.',skill:'comprehension'}},
+      {id:'cape-jardin',lvl:'D',emoji:'🦸',title:'La cape dans le jardin',pages:[
+        'Bibit porte sa cape rouge pour jouer dehors.',
+        'Il court entre les fleurs et saute au-dessus d une flaque.',
+        'Sa cape flotte derrière lui comme un drapeau.'
+      ],question:{q:'Comment flotte la cape?',choices:['Comme un drapeau','Comme une botte','Comme une pomme'],a:0,ok:'Oui! La cape flotte comme un drapeau.',skill:'comparaison'}},
+      {id:'oiseau-voyage',lvl:'E',emoji:'🐦',title:'Le voyage de l oiseau',pages:[
+        'Un oiseau bleu regarde le ciel par la fenêtre de la chambre.',
+        'Il voit un arc-en-ciel, puis il raconte ses couleurs une par une.',
+        'Bibit écoute, répète les mots et invente ensuite sa propre chanson.'
+      ],question:{q:'Que fait Bibit après avoir écouté l oiseau?',choices:['Il s endort tout de suite','Il invente une chanson','Il mange une pomme'],a:1,ok:'Oui. Bibit invente sa propre chanson.',skill:'comprehension'}},
+      {id:'bibliotheque-lune',lvl:'E',emoji:'🌙',title:'La bibliothèque de la lune',pages:[
+        'Le soir, Bibit ouvre un grand livre sous la lumière de la lune.',
+        'Il lit une page sur les saisons, puis une autre sur les animaux du nord.',
+        'Après chaque page, il raconte ce qu il a compris avec ses propres mots.'
+      ],question:{q:'Que fait Bibit après chaque page?',choices:['Il ferme le livre','Il raconte ce qu il a compris','Il cache la lune'],a:1,ok:'Bravo! Bibit raconte ce qu il a compris.',skill:'comprehension'}},
+      {id:'soupe-hiver',lvl:'E',emoji:'🍲',title:'La soupe de l hiver',pages:[
+        'Par une soirée froide, Carmen prépare une soupe chaude pour Bibit.',
+        'Bibit sent le maïs, les carottes et les haricots verts.',
+        'Il explique que la soupe lui donne de l énergie pour apprendre demain.'
+      ],question:{q:'Pourquoi Bibit aime-t-il la soupe?',choices:['Parce qu elle est froide','Parce qu elle lui donne de l énergie','Parce qu elle saute'],a:1,ok:'Oui! Bibit aime la soupe parce qu elle lui donne de l énergie.',skill:'cause'}},
+      {id:'promenade-automne',lvl:'E',emoji:'🍂',title:'La promenade d automne',pages:[
+        'En automne, Bibit marche avec ses bottes entre les feuilles orange et brunes.',
+        'Il en ramasse trois pour décorer son sac puis il observe le vent.',
+        'Enfin, il décrit calmement le ciel gris et les branches qui bougent.'
+      ],question:{q:'Combien de feuilles Bibit ramasse-t-il?',choices:['Deux','Trois','Cinq'],a:1,ok:'Exact! Bibit ramasse trois feuilles.',skill:'nombres'}},
+    ],
   },
 
   BOOST:{
@@ -1452,16 +1646,19 @@ const G = {
     ctx:null,
     init(){try{this.ctx=new(window.AudioContext||window.webkitAudioContext)();if(this.ctx.state==='suspended')this.ctx.resume();}catch(e){}},
     tone(f,type,dur,vol){if(!this.ctx)return;try{const o=this.ctx.createOscillator(),g=this.ctx.createGain();o.connect(g);g.connect(this.ctx.destination);o.type=type;o.frequency.value=f;g.gain.setValueAtTime(vol,this.ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,this.ctx.currentTime+dur);o.start(this.ctx.currentTime);o.stop(this.ctx.currentTime+dur);}catch(e){}},
+    slide(from,to,type,dur,vol){if(!this.ctx)return;try{const o=this.ctx.createOscillator(),g=this.ctx.createGain();o.connect(g);g.connect(this.ctx.destination);o.type=type;o.frequency.setValueAtTime(from,this.ctx.currentTime);o.frequency.exponentialRampToValueAtTime(Math.max(1,to),this.ctx.currentTime+dur);g.gain.setValueAtTime(vol,this.ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,this.ctx.currentTime+dur);o.start(this.ctx.currentTime);o.stop(this.ctx.currentTime+dur);}catch(e){}},
     noise(dur,vol,cutoff){if(!this.ctx)return;try{const len=Math.max(1,Math.floor(this.ctx.sampleRate*dur));const buf=this.ctx.createBuffer(1,len,this.ctx.sampleRate);const data=buf.getChannelData(0);for(let i=0;i<len;i++)data[i]=(Math.random()*2-1)*(1-i/len);const src=this.ctx.createBufferSource();const filter=this.ctx.createBiquadFilter();const gain=this.ctx.createGain();src.buffer=buf;filter.type='lowpass';filter.frequency.value=cutoff||1200;src.connect(filter);filter.connect(gain);gain.connect(this.ctx.destination);gain.gain.setValueAtTime(vol,this.ctx.currentTime);gain.gain.exponentialRampToValueAtTime(.001,this.ctx.currentTime+dur);src.start();src.stop(this.ctx.currentTime+dur);}catch(e){}},
-    pop(){this.tone(660,'sine',.1,.2);},
-    chomp(){this.tone(200,'triangle',.07,.12);this.noise(.05,.03,900);setTimeout(()=>{this.tone(310,'triangle',.08,.1);this.noise(.04,.025,700);},90);},
-    splash(){this.noise(.18,.08,2400);this.tone(760,'sine',.11,.05);setTimeout(()=>this.tone(460,'sine',.16,.04),70);},
-    ding(){this.tone(880,'sine',.25,.2);setTimeout(()=>this.tone(1100,'sine',.15,.15),120);},
-    plop(){this.tone(170,'sine',.16,.2);this.noise(.07,.03,500);setTimeout(()=>this.tone(110,'sine',.18,.12),90);},
-    giggle(){this.tone(820,'sine',.06,.11);setTimeout(()=>this.tone(980,'sine',.06,.11),70);setTimeout(()=>this.tone(1160,'sine',.08,.11),140);setTimeout(()=>this.noise(.05,.02,1600),60);},
-    success(){this.tone(523,'sine',.15,.2);setTimeout(()=>this.tone(659,'sine',.15,.2),150);setTimeout(()=>this.tone(784,'sine',.3,.25),300);},
+    pop(){this.slide(520,720,'sine',.09,.16);},
+    chomp(){this.slide(180,140,'triangle',.08,.12);this.noise(.05,.03,900);setTimeout(()=>{this.slide(330,250,'triangle',.08,.1);this.noise(.04,.025,700);},90);},
+    splash(){this.noise(.18,.08,2400);this.slide(920,520,'sine',.12,.06);setTimeout(()=>this.tone(460,'sine',.16,.04),70);},
+    ding(){this.tone(880,'sine',.2,.16);setTimeout(()=>this.tone(1175,'sine',.18,.12),90);setTimeout(()=>this.tone(1400,'sine',.14,.08),170);},
+    pageTurn(){this.noise(.08,.028,2800);this.slide(380,780,'triangle',.12,.04);setTimeout(()=>this.slide(820,420,'sine',.1,.03),55);},
+    sparkle(){this.slide(960,1560,'sine',.12,.05);setTimeout(()=>this.tone(1320,'sine',.08,.04),45);},
+    plop(){this.slide(210,120,'sine',.18,.22);this.noise(.08,.028,560);setTimeout(()=>this.tone(96,'sine',.16,.11),70);},
+    giggle(){this.tone(820,'sine',.06,.1);setTimeout(()=>this.tone(980,'sine',.06,.1),65);setTimeout(()=>this.tone(1160,'sine',.08,.1),130);setTimeout(()=>this.noise(.05,.02,1900),55);setTimeout(()=>this.slide(900,1240,'triangle',.09,.05),150);},
+    success(){this.tone(523,'sine',.13,.18);setTimeout(()=>this.tone(659,'sine',.13,.18),110);setTimeout(()=>this.tone(784,'sine',.24,.22),220);setTimeout(()=>this.sparkle(),330);},
     fail(){this.tone(400,'sine',.2,.12);setTimeout(()=>this.tone(300,'sine',.3,.12),200);},
-    fanfare(){this.tone(523,'sine',.2,.2);setTimeout(()=>this.tone(659,'sine',.2,.2),200);setTimeout(()=>this.tone(784,'sine',.2,.2),400);setTimeout(()=>this.tone(1047,'sine',.5,.25),600);},
+    fanfare(){this.tone(523,'sine',.16,.18);setTimeout(()=>this.tone(659,'sine',.16,.18),120);setTimeout(()=>this.tone(784,'sine',.18,.18),240);setTimeout(()=>this.tone(1047,'sine',.42,.24),420);setTimeout(()=>this.sparkle(),520);},
     streak(n){const f=400+n*80;this.tone(f,'sine',.12,.18);setTimeout(()=>this.tone(f*1.5,'sine',.18,.22),120);},
     urgentBeep(){this.tone(600,'square',.08,.08);},
   },
@@ -1632,6 +1829,18 @@ const G = {
         needs:{...this.s.needs,...data.needs},
         potty:{...this.s.potty,...data.potty},
         stats:{...this.s.stats,...data.stats},
+        reading:{
+          ...this.s.reading,
+          ...(data.reading||{}),
+          sessions:Array.isArray((data.reading||{}).sessions)?[...(data.reading||{}).sessions]:[...this.s.reading.sessions],
+          seenStoryIds:Array.isArray((data.reading||{}).seenStoryIds)?[...(data.reading||{}).seenStoryIds]:[...this.s.reading.seenStoryIds],
+          wordCounts:{...this.s.reading.wordCounts,...((data.reading||{}).wordCounts||{})},
+        },
+        reports:{
+          ...this.s.reports,
+          ...(data.reports||{}),
+          sessions:Array.isArray((data.reports||{}).sessions)?[...(data.reports||{}).sessions]:[...this.s.reports.sessions],
+        },
         avatarData:{
           ...this.s.avatarData,
           ...(data.avatarData||{}),
@@ -1737,6 +1946,8 @@ const G = {
   updateDashboard(){
     const playEl=document.getElementById('dash-playtime');if(!playEl)return;
     const av=this.getAvatar();
+    const reading=this.s.reading||{stories:0,questions:0,correct:0,lastTitle:'',skipped:0,sessions:[],wordCounts:{}};
+    const readingPct=reading.questions?Math.round((reading.correct/reading.questions)*100):0;
     playEl.textContent=`${Math.max(1,Math.round(this.totalPlayMs()/60000))} min`;
     document.getElementById('dash-words').textContent=this.s.heard.size;
     document.getElementById('dash-level').textContent=`Niveau ${this.s.lvl}`;
@@ -1747,6 +1958,20 @@ const G = {
     }).join('');
     const heard=[...this.s.heard].slice(-12).reverse();
     document.getElementById('dash-heard').innerHTML=heard.length?heard.map(word=>`<span class="dash-pill">${word}</span>`).join(''):`<span class="dash-pill">Pas encore</span>`;
+    const topWords=Object.entries(reading.wordCounts||{}).sort((a,b)=>(b[1]-a[1])||a[0].localeCompare(b[0],'fr')).slice(0,8);
+    document.getElementById('dash-word-counts').innerHTML=topWords.length?topWords.map(([word,count])=>`<span class="dash-pill">${word} ×${count}</span>`).join(''):`<span class="dash-pill">Les répétitions s'afficheront ici</span>`;
+    document.getElementById('dash-reading').innerHTML=[
+      `📚 Histoires: ${reading.stories}`,
+      `❓ Questions: ${reading.questions}`,
+      `🎯 Réussite: ${readingPct}%`,
+      `⏭️ Passées: ${reading.skipped||0}`,
+      reading.lastTitle?`🌙 Dernière: ${reading.lastTitle}`:'🌙 Pas encore de lecture',
+    ].map(text=>`<span class="dash-pill">${text}</span>`).join('');
+    const readingLog=(reading.sessions||[]).slice(0,4);
+    document.getElementById('dash-reading-log').innerHTML=readingLog.length?readingLog.map(entry=>`<span class="dash-pill">${entry.icon||'📖'} ${entry.title} • ${entry.result}${entry.skill?` • ${entry.skill}`:''}</span>`).join(''):`<span class="dash-pill">Aucune séance de lecture terminée</span>`;
+    const sessions=((this.s.reports||{}).sessions||[]).slice(0,6);
+    const dashSessions=document.getElementById('dash-sessions');
+    if(dashSessions)dashSessions.innerHTML=sessions.length?sessions.map(entry=>`<span class="dash-pill">${entry.icon||'📝'} ${entry.title} • ${entry.detail}</span>`).join(''):`<span class="dash-pill">Les dernières activités importantes apparaîtront ici</span>`;
     document.getElementById('dash-stats').innerHTML=[
       `🍎 Repas: ${this.s.stats.fed}`,
       `🫧 Bains: ${this.s.stats.washed}`,
@@ -1778,7 +2003,209 @@ const G = {
     this.schedulePotty();this.scheduleEvent();
     this.save();
   },
-  trackWord(word){if(!word)return;this.s.heard.add(String(word).toLowerCase());this.updateDashboard();this.save();},
+  cleanWord(word){
+    return this.normText(String(word||'').replace(/^'+|'+$/g,'').replace(/[!?.,;:()]/g,' ').trim());
+  },
+  rememberWord(word){
+    const clean=this.cleanWord(word);
+    if(!clean)return null;
+    this.s.heard.add(clean);
+    const counts=this.s.reading.wordCounts||(this.s.reading.wordCounts={});
+    counts[clean]=(counts[clean]||0)+1;
+    return clean;
+  },
+  rememberWords(text){
+    const words=[];
+    String(text||'').split(/[^A-Za-zÀ-ÿ'-]+/).forEach(word=>{
+      const clean=this.rememberWord(word);
+      if(clean)words.push(clean);
+    });
+    return words;
+  },
+  rememberReadingSession(entry){
+    const sessions=this.s.reading.sessions||(this.s.reading.sessions=[]);
+    sessions.unshift({at:Date.now(),...entry});
+    this.s.reading.sessions=sessions.slice(0,12);
+  },
+  reportSession(icon,title,detail){
+    const report=this.s.reports||(this.s.reports={sessions:[]});
+    report.sessions=[{icon,title,detail,at:Date.now()},...(report.sessions||[])].slice(0,12);
+    this.updateDashboard();this.save();
+  },
+  pickStory(pool){
+    const seen=new Set(this.s.reading.seenStoryIds||[]);
+    const unseen=pool.filter(story=>!seen.has(story.id));
+    if(unseen.length)return unseen[0];
+    const last=this.s.reading?.lastTitle||'';
+    const source=pool.filter(story=>story.title!==last);
+    const choices=source.length?source:pool;
+    return choices[Math.floor(Math.random()*choices.length)];
+  },
+  trackWord(word){
+    if(!this.rememberWord(word))return;
+    this.updateDashboard();this.save();
+  },
+  trackPhrase(text){
+    if(!this.rememberWords(text).length)return;
+    this.updateDashboard();this.save();
+  },
+  storyPool(){return(this.C.stories||[]).filter(story=>this.lvlRank(story.lvl||'C')<=this.lvlRank(this.s.lvl));},
+  storyMarkup(text){return String(text||'').split(/(\s+)/).map(w=>{if(!w.trim())return w;return`<span class="bw" onclick="G.tapW(this,'${w.replace(/'/g,"\\'")}')">${w}</span>`;}).join('');},
+  renderStory(){
+    const session=this._storySession;if(!session)return;
+    const ov=document.getElementById('story-ov');
+    const story=session.story;
+    const choices=document.getElementById('story-choices');
+    const result=document.getElementById('story-result');
+    const body=document.getElementById('story-body');
+    const hint=document.getElementById('story-hint');
+    const next=document.getElementById('story-next');
+    const skip=document.getElementById('story-skip');
+    document.getElementById('story-badge').textContent=story.emoji||'📖';
+    document.getElementById('story-title').textContent=story.title;
+    choices.style.display='none';result.style.display='none';
+    if(session.phase==='page'){
+      const pageText=story.pages[session.page];
+      if(!session.pagesSeen.includes(session.page))session.pagesSeen.push(session.page);
+      document.getElementById('story-progress').textContent=`Page ${session.page+1}/${story.pages.length}`;
+      body.innerHTML=this.storyMarkup(pageText);
+      hint.style.display='block';
+      skip.style.display='inline-flex';skip.textContent='Dormir';
+      next.style.display='inline-flex';next.textContent=session.page===story.pages.length-1?'Question':'Suivant';
+      const speakKey=`page:${session.page}`;
+      if(session.lastSpeak!==speakKey){
+        session.lastSpeak=speakKey;
+        this.trackPhrase(pageText);
+        setTimeout(()=>this.A.say(pageText,this.voiceRate()),180);
+      }
+    }else if(session.phase==='question'){
+      document.getElementById('story-progress').textContent='Question';
+      body.textContent=story.question.q;
+      hint.style.display='block';hint.textContent='Choisis la meilleure réponse.';
+      choices.style.display='grid';
+      choices.innerHTML=story.question.choices.map((choice,i)=>
+        `<button class="story-choice" onclick="G.answerStory(${i})">${choice}</button>`
+      ).join('');
+      skip.style.display='inline-flex';skip.textContent='Plus tard';
+      next.style.display='none';
+      if(session.lastSpeak!=='question'){
+        session.lastSpeak='question';
+        this.trackPhrase(story.question.q);
+        setTimeout(()=>this.A.say(story.question.q,this.voiceRate()),180);
+      }
+    }else{
+      document.getElementById('story-progress').textContent='Bonne nuit';
+      body.innerHTML=this.storyMarkup(story.pages[story.pages.length-1]);
+      hint.style.display='none';
+      choices.style.display='grid';
+      choices.innerHTML=story.question.choices.map((choice,i)=>{
+        const cls=i===story.question.a?' correct':(i===session.selected&&!session.correct?' wrong':'');
+        return `<button class="story-choice${cls}">${choice}</button>`;
+      }).join('');
+      result.style.display='block';result.textContent=session.feedback;
+      skip.style.display='none';
+      next.style.display='inline-flex';next.textContent='Bonne nuit';
+      const speakKey=`result:${session.correct?'ok':'retry'}`;
+      if(session.lastSpeak!==speakKey){
+        session.lastSpeak=speakKey;
+        setTimeout(()=>this.A.say(session.feedback,this.voiceRate()),180);
+      }
+    }
+    ov.style.display='flex';
+  },
+  startBedtimeStory(reward){
+    const pool=this.storyPool();
+    if(!pool.length){this.finishSleepReward(reward);return;}
+    const story=this.pickStory(pool);
+    if(!this.s.reading.seenStoryIds.includes(story.id))this.s.reading.seenStoryIds.push(story.id);
+    this._storySession={story,page:0,phase:'page',selected:null,correct:false,feedback:'',reward,lastSpeak:'',startedAt:Date.now(),pagesSeen:[]};
+    this.SFX.pageTurn();
+    this.renderStory();
+  },
+  advanceStory(){
+    const session=this._storySession;if(!session)return;
+    if(session.phase==='page'){
+      if(session.page<session.story.pages.length-1)session.page++;
+      else session.phase='question';
+      this.SFX.pageTurn();
+      this.renderStory();
+      return;
+    }
+    if(session.phase==='result'){this.finishStory();return;}
+  },
+  answerStory(index){
+    const session=this._storySession;if(!session||session.phase!=='question')return;
+    const q=session.story.question;
+    session.selected=index;
+    session.correct=index===q.a;
+    session.phase='result';
+    this.s.reading.stories++;
+    this.s.reading.questions++;
+    this.s.reading.lastTitle=session.story.title;
+    if(session.correct){
+      this.s.reading.correct++;
+      if(this.s.avatar==='coach')this.s.avatarData.coach.readingWins=(this.s.avatarData.coach.readingWins||0)+1;
+      session.feedback=q.ok;
+      this.SFX.success();
+    }else{
+      session.feedback=`Pas tout à fait. ${q.ok}`;
+      this.SFX.fail();
+    }
+    this.updateDashboard();
+    this.save();
+    this.renderStory();
+  },
+  closeStory(){
+    const ov=document.getElementById('story-ov');if(ov)ov.style.display='none';
+    this._storySession=null;
+  },
+  skipStory(){
+    const session=this._storySession;if(!session)return;
+    const reward=session.reward;
+    this.s.reading.skipped=(this.s.reading.skipped||0)+1;
+    this.rememberReadingSession({
+      icon:session.story.emoji||'📖',
+      title:session.story.title,
+      result:`écourtée page ${Math.min(session.page+1,session.story.pages.length)}/${session.story.pages.length}`,
+      skill:(session.story.question&&session.story.question.skill)||'lecture',
+    });
+    this.reportSession(session.story.emoji||'🌙',session.story.title,'lecture écourtée');
+    this.closeStory();
+    this.finishSleepReward(reward);
+  },
+  finishStory(){
+    const session=this._storySession;if(!session)return;
+    const reward=session.reward;
+    const correct=!!session.correct;
+    const skill=(session.story.question&&session.story.question.skill)||'lecture';
+    this.rememberReadingSession({
+      icon:session.story.emoji||'📖',
+      title:session.story.title,
+      result:correct?'réussie':'à revoir',
+      skill,
+    });
+    this.reportSession(session.story.emoji||'📖',session.story.title,`${correct?'réussie':'à revoir'} • ${skill}`);
+    this.closeStory();
+    if(correct){
+      this.earnPoints(8,'lecture',15,22);
+      this.earnTrait('esprit',1,18,32);
+    }else{
+      this.earnPoints(4,'histoire lue',15,22);
+    }
+    this.finishSleepReward(reward);
+  },
+  finishSleepReward(reward){
+    const dim=document.getElementById('room-dim');
+    dim.classList.remove('show');dim.onclick=null;
+    document.getElementById('bb-blanket').classList.remove('show');
+    this.s.needs.energie=Math.min(100,this.s.needs.energie+40);
+    this.s.needs.faim=Math.max(0,this.s.needs.faim-10);
+    this.updateNeeds();
+    setTimeout(()=>{
+      this.say('slept');this.particles('☀️',3);this.updateBB();this.earnPoints(reward.points,reward.note,15,28);this.registerCare();
+      this.moveTo('center',()=>{this._busy=false;});
+    },400);
+  },
   tutorialSteps(){return[
     {key:'feed',spot:'food',text:'Ton Bibit a faim! Touche la nourriture 🍽️',top:56},
     {key:'wash',spot:'bath',text:'Bien joué! Maintenant, lave ton Bibit 🛁',top:56},
@@ -1838,11 +2265,216 @@ const G = {
     this.schedulePotty(12000);this.scheduleEvent(15000);this.save();
     setTimeout(()=>this.say('idle'),700);
   },
-  startWordRace(){this.showToast('⚡','Course de mots bientôt');},
-  startCountRace(){this.showToast('🔢','Course de nombres bientôt');},
-  startTeachingSession(){this.showToast('📖','Leçon bientôt');},
-  startSagePuzzle(){this.showToast('🦉','Mystère bientôt');},
-  startCoachReading(){this.showToast('🌟','Lecture bientôt');},
+  startWordRace(){
+    const pool=this.learningItems();
+    if(pool.length<3){this.showToyPicker();return;}
+    this._busy=true;
+    this.moveTo('play',()=>{
+      this.wordPop('Course',88,35);
+      this._mini={type:'word',pool,total:5,round:0,correct:0,score:0,fastest:null,feedback:'',locked:false};
+      this.nextWordRaceRound();
+    });
+  },
+  nextWordRaceRound(){
+    const m=this._mini;if(!m)return;
+    const correct=this.shuffle(m.pool)[0];
+    m.question={correct,options:this.pickOptions(correct,m.pool,3),start:Date.now()};
+    m.feedback='';m.locked=false;m.round++;
+    const best=this.s.avatarData.champion.bestWordRaceMs;
+    this.openMiniPanel('⚡ Course de mots',`<div class="mini-wrap"><div class="mini-card"><div class="mini-progress">Manche ${m.round}/${m.total}</div><div class="mini-emoji">${correct.emoji}</div><div class="mini-prompt">Quel mot va avec cette image?</div><div class="mini-sub">${best?`Meilleur temps: ${best} ms`:'Plus rapide = plus de points'}</div></div><div class="mini-choices">${m.question.options.map(item=>`<button class="mini-choice" onclick="G.pickWordRace('${item.name.replace(/'/g,"\\'")}')">${item.name}</button>`).join('')}</div><div class="mini-feedback">Lis vite et choisis le bon mot.</div></div>`);
+    this.A.say('Quel mot va avec cette image?',this.voiceRate());
+  },
+  pickWordRace(name){
+    const m=this._mini;if(!m||m.type!=='word'||m.locked)return;
+    const hit=name===m.question.correct.name;
+    m.locked=true;
+    const elapsed=Date.now()-m.question.start;
+    if(hit){
+      m.correct++;m.score+=Math.max(3,10-Math.floor(elapsed/700));
+      m.fastest=m.fastest===null?elapsed:Math.min(m.fastest,elapsed);
+      const best=this.s.avatarData.champion.bestWordRaceMs;
+      if(!best||elapsed<best)this.s.avatarData.champion.bestWordRaceMs=elapsed;
+      this.SFX.success();this.A.word(m.question.correct.name);
+    }else{this.SFX.fail();}
+    this.openMiniPanel('⚡ Course de mots',`<div class="mini-wrap"><div class="mini-card"><div class="mini-progress">Manche ${m.round}/${m.total}</div><div class="mini-emoji">${m.question.correct.emoji}</div><div class="mini-prompt">${hit?'Bravo!':'Essaie encore demain!'}</div><div class="mini-sub">${hit?`${elapsed} ms`:`Le bon mot était ${m.question.correct.name}.`}</div></div><div class="mini-choices">${m.question.options.map(item=>{const cls=item.name===m.question.correct.name?' good':(item.name===name&&!hit?' bad':'');return `<button class="mini-choice${cls}">${item.name}</button>`;}).join('')}</div></div>`);
+    setTimeout(()=>{if(m.round>=m.total)this.finishWordRace();else this.nextWordRaceRound();},700);
+  },
+  finishWordRace(){
+    const m=this._mini;if(!m)return;
+    this.s.needs.joie=Math.min(100,this.s.needs.joie+22);
+    this.updateNeeds();this.s.stats.played++;
+    this.earnPoints(12+m.score,'course',88,28);this.earnTrait('vitesse',2,88,34);this.registerCare();
+    this.reportSession('⚡','Course de mots',`${m.correct}/${m.total} • ${m.fastest!==null?m.fastest+' ms':'lecture rapide'}`);
+    this.openMiniPanel('⚡ Course de mots',`<div class="mini-wrap"><div class="mini-card"><div class="mini-emoji">🏁</div><div class="mini-prompt">Course terminée!</div><div class="mini-summary">${m.correct}/${m.total} bonnes réponses.${m.fastest!==null?` Meilleur temps: ${m.fastest} ms.`:''}</div></div><button class="mini-next" onclick="G.finishMiniPanel()">Continuer</button></div>`);
+    this.SFX.fanfare();
+  },
+  startCountRace(fromExped=false){
+    const [min,max]=this.s.lvl==='C'?[1,5]:this.s.lvl==='D'?[1,10]:[1,20];
+    this._countRace={fromExped,total:5,round:0,correct:0,score:0,min,max,emoji:'⭐',locked:false};
+    this.nextCountRaceRound();
+  },
+  nextCountRaceRound(){
+    const r=this._countRace;if(!r)return;
+    r.round++;
+    const count=Math.floor(Math.random()*(r.max-r.min+1))+r.min;
+    const emoji=this.shuffle(['⭐','🍎','🫧','🎈','🍓','🐟'])[0];
+    let wrong=count+(Math.random()<.5?-1:1)*(1+Math.floor(Math.random()*Math.max(1,Math.min(4,count))));
+    if(wrong<1||wrong===count)wrong=count+2;
+    r.emoji=emoji;r.question={count,options:this.shuffle([count,wrong]),start:Date.now()};r.locked=false;
+    const area=document.getElementById('exp-area');
+    area.innerHTML=`<div class="mini-wrap"><div class="mini-card"><div class="mini-progress">Manche ${r.round}/${r.total}</div><div class="mini-prompt">Combien de ${emoji} vois-tu?</div><div class="mini-sub">Regarde bien puis choisis le bon nombre.</div><div class="mini-count-grid">${Array.from({length:count},()=>`<span class="mini-count-obj">${emoji}</span>`).join('')}</div></div><div class="mini-grid">${r.question.options.map(value=>`<button class="mini-choice" onclick="G.pickCountRace(${value})">${value}</button>`).join('')}</div></div>`;
+    this.A.say('Combien y en a-t-il?',this.voiceRate());
+  },
+  pickCountRace(value){
+    const r=this._countRace;if(!r||r.locked)return;
+    r.locked=true;
+    const hit=value===r.question.count;
+    const elapsed=Date.now()-r.question.start;
+    if(hit){
+      r.correct++;r.score+=Math.max(3,10-Math.floor(elapsed/800));
+      const best=this.s.avatarData.champion.bestCountRaceMs;
+      if(!best||elapsed<best)this.s.avatarData.champion.bestCountRaceMs=elapsed;
+      this.SFX.success();
+    }else this.SFX.fail();
+    document.getElementById('exp-area').innerHTML=`<div class="mini-wrap"><div class="mini-card"><div class="mini-emoji">${hit?'🏆':'🤔'}</div><div class="mini-prompt">${hit?'Exact!':`Il y en avait ${r.question.count}.`}</div><div class="mini-summary">${hit?`${elapsed} ms pour compter.`:'On continue quand même.'}</div></div></div>`;
+    setTimeout(()=>{if(r.round>=r.total)this.finishCountRace();else this.nextCountRaceRound();},800);
+  },
+  finishCountRace(){
+    const r=this._countRace;if(!r)return;
+    this.earnPoints(10+r.score,'nombres',50,18);this.earnTrait('vitesse',1,56,24);
+    this.reportSession('🔢','Course de nombres',`${r.correct}/${r.total} • niveau ${this.s.lvl}`);
+    document.getElementById('exp-area').innerHTML=`<div class="mini-wrap"><div class="mini-card"><div class="mini-emoji">🔢</div><div class="mini-prompt">Course de nombres finie!</div><div class="mini-summary">${r.correct}/${r.total} bonnes réponses. Ton meilleur temps est conservé pour Le Champion.</div></div></div>`;
+    this._countRace=null;
+    setTimeout(()=>this.nextStep(),1200);
+  },
+  startTeachingSession(){
+    const pool=this.learningItems();
+    if(pool.length<3){this.showToyPicker();return;}
+    this._busy=true;
+    this.moveTo('play',()=>{
+      this.wordPop('Apprendre',88,35);
+      this._mini={type:'teach',pool,total:4,round:0,correct:0,feedback:'',locked:false};
+      this.nextTeachingRound();
+    });
+  },
+  nextTeachingRound(){
+    const m=this._mini;if(!m)return;
+    const correct=this.shuffle(m.pool)[0];
+    const options=this.pickOptions(correct,m.pool,3);
+    const accuracy=this.s.avatarData.eleve.creatureAccuracy||.3;
+    const guess=Math.random()<accuracy?correct:options.find(item=>item.name!==correct.name)||options[1];
+    m.round++;m.locked=false;m.question={correct,options,guess};
+    this.openMiniPanel('📖 Enseigne-moi',`<div class="mini-wrap"><div class="mini-card"><div class="mini-progress">Leçon ${m.round}/${m.total}</div><div class="mini-emoji">${correct.emoji}</div><div class="mini-prompt">Bibit dit: "C'est ${guess.name}?"</div><div class="mini-sub">Choisis le bon mot pour l'aider.</div></div><div class="mini-grid">${options.map(item=>`<button class="mini-choice" onclick="G.pickTeaching('${item.name.replace(/'/g,"\\'")}')">${item.emoji} ${item.name}</button>`).join('')}</div><div class="mini-feedback">Corrige doucement ton Bibit.</div></div>`);
+    this.A.say(`C'est ${guess.name}?`,this.voiceRate());
+  },
+  pickTeaching(name){
+    const m=this._mini;if(!m||m.type!=='teach'||m.locked)return;
+    const correct=m.question.correct;
+    if(name!==correct.name){this.SFX.fail();this.showToast('🤔','Essaie encore');this.A.say('Hmm... je ne suis pas sûr.',this.voiceRate());return;}
+    m.locked=true;m.correct++;
+    this.s.avatarData.eleve.creatureAccuracy=Math.min(.95,(this.s.avatarData.eleve.creatureAccuracy||.3)+.08);
+    if(!this.s.avatarData.eleve.wordsTaught.includes(correct.name))this.s.avatarData.eleve.wordsTaught.push(correct.name);
+    this.SFX.success();this.A.say(`Ah oui! C'est ${correct.name}! Merci!`,this.voiceRate());
+    this.openMiniPanel('📖 Enseigne-moi',`<div class="mini-wrap"><div class="mini-card"><div class="mini-emoji">${correct.emoji}</div><div class="mini-prompt">Ah oui! C'est ${correct.name}!</div><div class="mini-summary">Bibit apprend un nouveau mot avec toi.</div></div></div>`);
+    setTimeout(()=>{if(m.round>=m.total)this.finishTeachingSession();else this.nextTeachingRound();},800);
+  },
+  finishTeachingSession(){
+    const m=this._mini;if(!m)return;
+    this.s.needs.joie=Math.min(100,this.s.needs.joie+18);this.updateNeeds();this.s.stats.played++;
+    this.earnPoints(12+m.correct*2,'leçon',88,28);this.earnTrait('esprit',2,88,34);this.registerCare();
+    this.reportSession('📖','Leçon Élève',`${m.correct}/${m.total} • précision ${Math.round((this.s.avatarData.eleve.creatureAccuracy||0)*100)}%`);
+    this.openMiniPanel('📖 Enseigne-moi',`<div class="mini-wrap"><div class="mini-card"><div class="mini-emoji">🎓</div><div class="mini-prompt">Leçon terminée!</div><div class="mini-summary">${m.correct}/${m.total} mots bien corrigés. Précision du Bibit: ${Math.round((this.s.avatarData.eleve.creatureAccuracy||0)*100)}%.</div></div><button class="mini-next" onclick="G.finishMiniPanel()">Continuer</button></div>`);
+    this.SFX.fanfare();
+  },
+  startSagePuzzle(){
+    const bank=[
+      {prompt:'Quel symbole vient ensuite?',display:['🔵','⭐','🔵',null],options:['⭐','🔵','🟩'],answer:'⭐'},
+      {prompt:'Quel symbole manque?',display:['🍎','🍎','🍌',null],options:['🍎','🍌','🍓'],answer:'🍌'},
+      {prompt:'Quel symbole ne va pas avec les autres?',display:['🐱','🐶','🍎','🐰'],options:['🐱','🍎','🐰'],answer:'🍎',odd:true},
+      {prompt:'Quel symbole vient ensuite?',display:['🟨','🟩','🟨',null],options:['🟩','🟨','🟦'],answer:'🟩'},
+      {prompt:'Quel symbole ne va pas avec les autres?',display:['🎈','🎾','🧸','🍞'],options:['🎈','🧸','🍞'],answer:'🍞',odd:true},
+      {prompt:'Quel symbole vient ensuite?',display:['🟪','🟧','🟪',null],options:['🟧','🟪','⭐'],answer:'🟧'},
+      {prompt:'Quel symbole manque?',display:['❄️','☀️','❄️',null],options:['☀️','🌧️','🍂'],answer:'☀️'},
+      {prompt:'Quel symbole ne va pas avec les autres?',display:['👕','🧢','👟','🍎'],options:['👕','👟','🍎'],answer:'🍎',odd:true},
+      {prompt:'Quel symbole vient ensuite?',display:['🐢','🐇','🐢',null],options:['🐇','🐢','🚂'],answer:'🐇'},
+    ];
+    this._busy=true;
+    this.moveTo('play',()=>{
+      this.wordPop('Réfléchir',88,35);
+      this._mini={type:'sage',total:4,round:0,correct:0,bank:this.shuffle(bank).slice(0,4),locked:false};
+      this.nextSageRound();
+    });
+  },
+  nextSageRound(){
+    const m=this._mini;if(!m)return;
+    const q=m.bank[m.round];
+    m.round++;m.locked=false;m.question=q;
+    this.openMiniPanel('🦉 Mystère du Sage',`<div class="mini-wrap"><div class="mini-card"><div class="mini-progress">Mystère ${m.round}/${m.total}</div><div class="mini-prompt">${q.prompt}</div><div class="mini-seq">${q.display.map(item=>item?`<span>${item}</span>`:'<span class="mini-missing">?</span>').join('')}</div><div class="mini-sub">${q.odd?'Trouve celui qui ne ressemble pas aux autres.':'Observe le motif puis choisis.'}</div></div><div class="mini-choices">${q.options.map(option=>`<button class="mini-choice" onclick="G.pickSagePuzzle('${option}')">${option}</button>`).join('')}</div></div>`);
+    this.A.say(q.prompt,this.voiceRate());
+  },
+  pickSagePuzzle(choice){
+    const m=this._mini;if(!m||m.type!=='sage'||m.locked)return;
+    m.locked=true;
+    const hit=choice===m.question.answer;
+    if(hit){m.correct++;this.SFX.success();}else this.SFX.fail();
+    this.openMiniPanel('🦉 Mystère du Sage',`<div class="mini-wrap"><div class="mini-card"><div class="mini-emoji">${hit?'🧠':'🌫️'}</div><div class="mini-prompt">${hit?'Bien vu!':'Presque.'}</div><div class="mini-summary">${hit?'Tu as trouvé le bon symbole.':`La bonne réponse était ${m.question.answer}.`}</div></div></div>`);
+    setTimeout(()=>{if(m.round>=m.total)this.finishSagePuzzle();else this.nextSageRound();},800);
+  },
+  finishSagePuzzle(){
+    const m=this._mini;if(!m)return;
+    this.s.needs.joie=Math.min(100,this.s.needs.joie+16);this.updateNeeds();this.s.stats.played++;
+    this.s.avatarData.sage.puzzlesSolved=(this.s.avatarData.sage.puzzlesSolved||0)+m.correct;
+    this.earnPoints(10+m.correct*2,'mystère',88,28);this.earnTrait('esprit',2,88,34);this.registerCare();
+    this.reportSession('🦉','Mystère du Sage',`${m.correct}/${m.total} énigmes`);
+    this.openMiniPanel('🦉 Mystère du Sage',`<div class="mini-wrap"><div class="mini-card"><div class="mini-emoji">🔮</div><div class="mini-prompt">Mystères résolus!</div><div class="mini-summary">${m.correct}/${m.total} bonnes réponses. Le Sage garde la mémoire de tes énigmes.</div></div><button class="mini-next" onclick="G.finishMiniPanel()">Continuer</button></div>`);
+    this.SFX.fanfare();
+  },
+  startCoachReading(){
+    const bank=this.shuffle([
+      {before:'Le ',word:'chat',after:' dort dans le lit.',options:['chat','chien','lapin']},
+      {before:'Je bois du ',word:'lait',after:' le matin.',options:['lait','jus','riz']},
+      {before:'La ',word:'balle',after:' roule très vite.',options:['balle','banane','fleur']},
+      {before:'Le ',word:'train',after:' roule sur la voie.',options:['train','bateau','guitare']},
+      {before:'La ',word:'carotte',after:' est orange.',options:['carotte','fraise','poire']},
+      {before:'Les ',word:'bottes',after:' marchent dans la neige.',options:['bottes','lunettes','ailes']},
+      {before:'Le ',word:'livre',after:' raconte une histoire.',options:['livre','tambour','robot']},
+      {before:'La ',word:'tuque',after:' est chaude en hiver.',options:['tuque','couronne','cape']},
+      {before:'Le ',word:'lapin',after:' cache une carotte.',options:['lapin','chien','poisson']},
+      {before:'Le ',word:'jus',after:' est dans le verre.',options:['jus','miel','riz']},
+    ]).slice(0,4);
+    this._busy=true;
+    this.moveTo('play',()=>{
+      this.wordPop('Lire',88,35);
+      this._mini={type:'coach',total:bank.length,round:0,correct:0,streak:0,best:this.s.avatarData.coach.bestReadingStreak||0,bank,locked:false};
+      this.nextCoachRound();
+    });
+  },
+  nextCoachRound(){
+    const m=this._mini;if(!m)return;
+    const q=m.bank[m.round];
+    m.round++;m.locked=false;m.question=q;
+    this.openMiniPanel('🌟 Lecture avec Coach',`<div class="mini-wrap"><div class="mini-card"><div class="mini-progress">Lecture ${m.round}/${m.total}</div><div class="mini-prompt">Quel mot complète la phrase?</div><div class="mini-sentence">${q.before}<span class="mini-blank">_____</span>${q.after}</div><div class="mini-sub">Écoute la phrase puis choisis le bon mot.</div></div><div class="mini-choices">${q.options.map(option=>`<button class="mini-choice" onclick="G.pickCoachReading('${option}')">${option}</button>`).join('')}</div><div class="mini-feedback">Série actuelle: ${m.streak}</div></div>`);
+    this.A.say(`${q.before}${q.word}${q.after}`,this.voiceRate());
+  },
+  pickCoachReading(word){
+    const m=this._mini;if(!m||m.type!=='coach'||m.locked)return;
+    m.locked=true;
+    const hit=word===m.question.word;
+    if(hit){m.correct++;m.streak++;m.best=Math.max(m.best,m.streak);this.SFX.success();}
+    else{m.streak=0;this.SFX.fail();}
+    this.openMiniPanel('🌟 Lecture avec Coach',`<div class="mini-wrap"><div class="mini-card"><div class="mini-emoji">${hit?'📘':'🫶'}</div><div class="mini-prompt">${hit?'Excellent!':'On essaie la suivante.'}</div><div class="mini-summary">${m.question.before}${m.question.word}${m.question.after}</div></div></div>`);
+    setTimeout(()=>{if(m.round>=m.total)this.finishCoachReading();else this.nextCoachRound();},850);
+  },
+  finishCoachReading(){
+    const m=this._mini;if(!m)return;
+    this.s.needs.joie=Math.min(100,this.s.needs.joie+16);this.updateNeeds();this.s.stats.played++;
+    this.s.avatarData.coach.readingWins=(this.s.avatarData.coach.readingWins||0)+m.correct;
+    this.s.avatarData.coach.bestReadingStreak=Math.max(this.s.avatarData.coach.bestReadingStreak||0,m.best);
+    this.earnPoints(10+m.correct*2,'lecture',88,28);this.earnTrait('force',2,88,34);this.registerCare();
+    this.reportSession('🌟','Lecture Coach',`${m.correct}/${m.total} • série ${m.best}`);
+    this.openMiniPanel('🌟 Lecture avec Coach',`<div class="mini-wrap"><div class="mini-card"><div class="mini-emoji">👏</div><div class="mini-prompt">Lecture finie!</div><div class="mini-summary">${m.correct}/${m.total} bonnes réponses. Meilleure série: ${m.best}.</div></div><button class="mini-next" onclick="G.finishMiniPanel()">Continuer</button></div>`);
+    this.SFX.fanfare();
+  },
   pointPop(text,x=50,y=28){
     const el=document.createElement('div');el.className='point-float';el.style.left=x+'%';el.style.top=y+'%';el.innerHTML=text;
     document.getElementById(this.curScr==='exped'?'exped':'care').appendChild(el);
@@ -1897,6 +2529,43 @@ const G = {
     const bagCount=(this.exp.bag||[]).length;
     const stepChip=document.getElementById('exp-step-chip');if(stepChip)stepChip.textContent=`Etape ${step}/${total}`;
     const bagChip=document.getElementById('exp-bag-chip');if(bagChip)bagChip.textContent=`🎒 ${bagCount}`;
+  },
+  shuffle(list){
+    const arr=[...list];
+    for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}
+    return arr;
+  },
+  learningItems(){
+    return [...this.C.toys,...this.C.foods].filter(item=>this.lvlRank(item.lvl)<=this.lvlRank(this.s.lvl));
+  },
+  pickOptions(correct,pool,count=3){
+    return this.shuffle([correct,...this.shuffle(pool.filter(item=>item.name!==correct.name)).slice(0,count-1)]);
+  },
+  playModeForAvatar(){
+    const mech=this.getAvatar().mechanic;
+    if(mech==='race')return this.startWordRace();
+    if(mech==='teach')return this.startTeachingSession();
+    if(mech==='puzzle')return this.startSagePuzzle();
+    if(mech==='coach')return this.startCoachReading();
+    return this.showToyPicker();
+  },
+  expRouteForAvatar(){
+    const rank=this.lvlRank(this.s.lvl);
+    if(this.getAvatar().mechanic==='race')return rank>=1?['count','collect','market','count']:['count','collect','market'];
+    return rank>=1?['collect','map','market','collect']:['collect','map','market'];
+  },
+  openMiniPanel(title,html){
+    this._spotMode='mini';
+    document.getElementById('sp-title').textContent=title;
+    const items=document.getElementById('sp-items');
+    items.classList.remove('wardrobe');
+    items.innerHTML=html;
+    document.getElementById('spot-backdrop').style.display='block';
+    document.getElementById('spot-panel').style.display='flex';
+  },
+  finishMiniPanel(){
+    this._mini=null;
+    this.closeSpotPanel();
   },
 
   // ===== SCREENS =====
@@ -2023,6 +2692,7 @@ const G = {
   },
   showBubble(text,emotion){
     const b=document.getElementById('bubble');const isUrg=emotion==='urgent';
+    this.rememberWords(text);
     b.innerHTML=text.split(/(\s+)/).map(w=>{if(!w.trim())return w;return`<span class="bw" onclick="G.tapW(this,'${w.replace(/'/g,"\\'")}')">${w}</span>`;}).join('');
     b.className='bubble'+(isUrg?' urgent-bubble':'');b.style.display='block';
     if((emotion==='happy'||emotion==='excited')&&!this.s.potty.phase){
@@ -2043,7 +2713,7 @@ const G = {
       case 'food':this.showFoodPicker();break;
       case 'bath':this.doWash();break;
       case 'closet':this.openWardrobe();break;
-      case 'play':this.showToyPicker();break;
+      case 'play':this.playModeForAvatar();break;
     }
   },
 
@@ -2068,16 +2738,13 @@ const G = {
       document.getElementById('bb-blanket').classList.add('show');
       const dim=document.getElementById('room-dim');dim.classList.add('show');
       this.A.say('Bonne nuit, Bibit.',.7);this.s.stats.slept++;
-      const wake=()=>{
-        dim.classList.remove('show');dim.onclick=null;
-        document.getElementById('bb-blanket').classList.remove('show');
-        this.s.needs.energie=Math.min(100,this.s.needs.energie+40);
-        this.s.needs.faim=Math.max(0,this.s.needs.faim-10);
-        this.updateNeeds();
-        setTimeout(()=>{this.say('slept');this.particles('☀️',3);this.updateBB();this.earnPoints(reward.points,reward.note,15,28);this.registerCare();
-          this.moveTo('center',()=>{this._busy=false;});},400);
-      };
-      dim.onclick=wake;setTimeout(()=>{if(dim.classList.contains('show'))wake();},3500);
+      const wake=()=>this.finishSleepReward(reward);
+      if(this.tutorialActive()||!this.storyPool().length){
+        dim.onclick=wake;setTimeout(()=>{if(dim.classList.contains('show'))wake();},3500);
+        return;
+      }
+      dim.onclick=null;
+      setTimeout(()=>this.startBedtimeStory(reward),650);
     });
   },
 
@@ -2208,8 +2875,9 @@ const G = {
     document.getElementById('spot-backdrop').style.display='none';
     document.getElementById('spot-panel').style.display='none';
     document.getElementById('sp-items').classList.remove('wardrobe');
-    if(this._spotMode==='wardrobe'){
+    if(this._spotMode==='wardrobe'||this._spotMode==='mini'){
       this._spotMode='';
+      this._mini=null;
       this.moveTo('center',()=>{this._busy=false;});
       return;
     }
@@ -2276,6 +2944,7 @@ const G = {
         this.showBubble(msgs[phase],'happy');
         this.s.needs.joie=Math.min(100,this.s.needs.joie+12);this.s.needs.propre=Math.min(100,this.s.needs.propre+5);
         this.updateNeeds();this.s.stats.pottyWin++;
+        this.reportSession('🚽','Potty',`${phase} • série ${this.s.potty.streak}`);
         this.earnPoints(this.pottyPoints(phase),phase==='critical'?'caca sauve':'pot parfait',30,24);this.registerCare();
         if(this.s.stats.pottyWin===1)this.unlock('first_potty','Premier pipi au pot!','🚽');
         if(this.s.potty.streak===3)this.unlock('streak3','Série de 3!','🔥');
@@ -2347,6 +3016,7 @@ const G = {
     this.SFX.success();this.particles('🎉',5);this.screenShake();this.showBubble('Bravo!','happy');
     this.s.needs.joie=Math.min(100,this.s.needs.joie+this._evReward);this.updateNeeds();this.updateBB();
     this.s.stats.events++;
+    this.reportSession('🎉','Mini-événement',`${this._evTotal} actions • ${this._evReward} joie`);
     this.earnPoints(Math.round(this._evReward+((this.s.traits.esprit||0)*.5)),'exploration',50,20);
     this.earnTrait('esprit',1,56,26);
     if(this.s.stats.events===1)this.unlock('first_ev','Aventurier!','🗺️');
@@ -2413,27 +3083,30 @@ const G = {
   // ===== EXPEDITIONS =====
   exp:{step:0,total:3,current:1,bag:[],route:['collect','map','market']},
   goExped(){
+    if(this._busy)return;
     if(this.tutorialActive()){this.showToast('🫧','Finis le petit guide d abord');return;}
     if(this.s.potty.phase&&this.s.potty.phase!=='success'&&this.s.potty.phase!=='fail'){
       clearTimeout(this._pottyPhaseT);this.s.potty.phase=null;
       document.getElementById('spot-potty').classList.remove('urgent');document.getElementById('care').classList.remove('potty-alert');}
     if(this._eventActive){this._eventActive=false;clearTimeout(this._evTimeout);document.getElementById('event-card').classList.remove('show');
       document.getElementById('room').querySelectorAll('.ev-target').forEach(t=>t.remove());}
-    const route=this.lvlRank(this.s.lvl)>=1?['collect','map','market','collect']:['collect','map','market'];
+    clearTimeout(this._eventT);
+    const route=this.expRouteForAvatar();
     this.exp={step:0,total:route.length,current:1,bag:[],route};
     this._busy=false;this.sw('exped');this.updateExpMeta('🌿 Expédition');
     setTimeout(()=>this.nextStep(),300);
   },
-  exitExped(){this.sw('care');this.updateBB();this.updateNeeds();this.schedulePotty(15000);this.scheduleEvent(20000);this.save();},
+  exitExped(){this._countRace=null;this.sw('care');this.updateBB();this.updateNeeds();this.schedulePotty(15000);this.scheduleEvent(20000);this.save();},
   nextStep(){
     if(this.exp.step>=this.exp.total){this.finishExp();return;}
     const g=this.exp.route[this.exp.step];
-    const titles={map:'🧭 Carte sonore',collect:'🎒 Récolte',market:'🛒 Marché'};
+    const titles={map:'🧭 Carte sonore',collect:'🎒 Récolte',market:'🛒 Marché',count:'🔢 Course de nombres'};
     this.exp.current=this.exp.step+1;
     this.updateExpMeta(titles[g]);
     this.exp.step++;
     if(g==='map')this.startMap();
     else if(g==='collect')this.startCollect();
+    else if(g==='count')this.startCountRace(true);
     else this.startMkt();
   },
   finishExp(){
@@ -2446,6 +3119,7 @@ const G = {
     });
     this.s.needs.joie=Math.min(100,this.s.needs.joie+10);
     this.s.expCount++;this.s.stats.exped++;
+    this.reportSession('🗺️','Expédition',`${rewards.length} trouvaille${rewards.length>1?'s':''}`);
     this.earnPoints(18+rewards.length*3,'expedition',50,16);
     this.earnTrait('esprit',1,56,24);
     if(this.s.stats.exped===1)this.unlock('first_exp','Première expédition!','🗺️');
@@ -2561,7 +3235,7 @@ if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostnam
 }
 document.getElementById('dash-ov').addEventListener('click',e=>{if(e.target.id==='dash-ov')G.closeDashboard();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')G.closeDashboard();});
-document.addEventListener('touchend',e=>{if(e.target.closest('button,.mcell,.mitm,.bw,.sp-item,.nd,.bb,.furn,.exp-btn,.slw,.mi-name,.ev-target,.toast,.spot-backdrop,.collect-item,.collect-btn,.dash-ov'))e.preventDefault();},{passive:false});
+document.addEventListener('touchend',e=>{if(e.target.closest('button,.mcell,.mitm,.bw,.sp-item,.nd,.bb,.furn,.exp-btn,.slw,.mi-name,.ev-target,.toast,.spot-backdrop,.collect-item,.collect-btn,.dash-ov,.story-ov,.story-choice,.story-next,.story-skip'))e.preventDefault();},{passive:false});
 </script>
 </body>
 </html>
