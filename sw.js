@@ -1,4 +1,4 @@
-const CACHE_NAME = 'labibite-v2';
+const CACHE_NAME = 'labibite-v3';
 const CORE_ASSETS = [
   './',
   './index.html',
@@ -6,6 +6,16 @@ const CORE_ASSETS = [
   './manifest.json',
   './icon-bubble.svg',
 ];
+
+function isAppShellRequest(request) {
+  const url = new URL(request.url);
+  const path = url.pathname;
+  return request.mode === 'navigate'
+    || path.endsWith('/')
+    || path.endsWith('/index.html')
+    || path.endsWith('/petit-monde-v3.html')
+    || path.endsWith('/manifest.json');
+}
 
 self.addEventListener('install', event => {
   event.waitUntil(
@@ -25,6 +35,22 @@ self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
   if (url.origin !== self.location.origin) return;
+
+  if (isAppShellRequest(event.request)) {
+    event.respondWith(
+      fetch(event.request).then(response => {
+        if (response && response.status === 200 && response.type === 'basic') {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
+        }
+        return response;
+      }).catch(async () => {
+        const cached = await caches.match(event.request);
+        return cached || caches.match('./petit-monde-v3.html');
+      })
+    );
+    return;
+  }
 
   event.respondWith(
     caches.match(event.request).then(cached => {
