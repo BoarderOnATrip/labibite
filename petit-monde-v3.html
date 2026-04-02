@@ -340,6 +340,11 @@ body{background:var(--wall);}
   display:flex;align-items:center;justify-content:center;
   transition:background .5s;
 }
+.bb-aura{
+  position:absolute;inset:-20px;border-radius:50%;z-index:0;opacity:0;pointer-events:none;
+  filter:blur(10px);mix-blend-mode:screen;transform:scale(.84);transition:opacity .35s ease,transform .35s ease,background .35s ease;
+}
+.bb-body.chromatic .bb-aura{opacity:.95;transform:scale(1);animation:aura-pulse 2.8s ease-in-out infinite;}
 .bb-body.idle{animation:bb-idle 3s ease-in-out infinite;}
 .bb-body.happy{animation:bb-bounce 1s ease infinite;}
 .bb-body.sad{background:linear-gradient(145deg,#C5D5E4,#A8C0D4);animation:bb-droop 2s ease infinite;}
@@ -365,6 +370,7 @@ body{background:var(--wall);}
 @keyframes hop{0%,100%{transform:translateY(0)}50%{transform:translateY(-18px)}}
 @keyframes embarrassed-wiggle{0%,100%{transform:translateY(0) rotate(0)}30%{transform:translateY(2px) rotate(-3deg)}60%{transform:translateY(1px) rotate(3deg)}}
 @keyframes style-sway{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-2px) rotate(2deg)}}
+@keyframes aura-pulse{0%,100%{transform:scale(.94)}50%{transform:scale(1.05)}}
 
 /* Diaper */
 .bb-diaper{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);width:76px;height:36px;background:#F5F0E8;border-radius:0 0 38px 38px;z-index:0;transition:background .3s,opacity .5s;}
@@ -375,6 +381,7 @@ body{background:var(--wall);}
 .bb-clothes{position:absolute;inset:0;pointer-events:none;z-index:3;}
 .bb-cloth{position:absolute;text-align:center;transition:opacity .3s,transform .3s;filter:drop-shadow(0 2px 3px rgba(0,0,0,.12));}
 .bb-cloth:empty{display:none;}
+.bb-cloth.soiled{filter:sepia(.85) saturate(1.15) brightness(.74) drop-shadow(0 2px 4px rgba(92,62,34,.3));transform:translateY(2px) scale(.96);}
 .bb-bottom{bottom:4px;left:50%;transform:translateX(-50%);font-size:32px;}
 .bb-top{top:56%;left:50%;transform:translate(-50%,-50%);font-size:30px;}
 .bb-head{top:-12px;left:50%;transform:translateX(-50%);font-size:26px;}
@@ -1019,6 +1026,7 @@ button,.furn,.sp-item,.mini-choice,.mini-next,.wd-tab,.pace-btn,.btn-bar,.mcell,
       <div class="bb" id="bb" onclick="G.tapBB()">
         <div class="bubble" id="bubble" style="display:none;"></div>
         <div class="bb-body idle" id="bb-body">
+          <div class="bb-aura" id="bb-aura"></div>
           <div class="bb-blanket" id="bb-blanket"></div>
           <div class="bb-diaper" id="bb-diaper"></div>
           <div class="bb-arm l"></div><div class="bb-arm r"></div>
@@ -1178,7 +1186,7 @@ const G = {
     stage:1,
     stats:{fed:0,washed:0,played:0,slept:0,pottyWin:0,pottyFail:0,events:0,exped:0},
     achievements:new Set(),
-    points:0,playMs:0,dailyVisits:0,careCount:0,lastSeen:null,lastSaved:null,stageTeased:false,tutorialDone:false,tutorialStep:0,
+    points:0,playMs:0,dailyVisits:0,careCount:0,lastSeen:null,lastSaved:null,stageTeased:false,tutorialDone:false,tutorialStep:0,sandboxGifted:false,
     reading:{stories:0,questions:0,correct:0,lastTitle:'',skipped:0,sessions:[],seenStoryIds:[],wordCounts:{}},
     reports:{sessions:[]},
     pace:'normal', // 'turbo' | 'fast' | 'normal' | 'chill' | 'zen'
@@ -1193,6 +1201,7 @@ const G = {
       owned:['couche'],
       wearing:{bottom:'couche',top:null,head:null,feet:null,accessory:null},
     },
+    mutation:{orange:0,blue:0,pink:0,green:0,gold:0},
     traits:{force:0,esprit:0,charme:0,vitesse:0},
     lvl:'C',mastery:{sw:15,dec:10,comp:8,flu:8,txt:8},expCount:0,heard:new Set(),
   },
@@ -1245,6 +1254,7 @@ const G = {
       {name:'Banane',emoji:'🍌',desc:'Une banane jaune.',lvl:'C'},
       {name:'Orange',emoji:'🍊',desc:'Une orange.',lvl:'C'},
       {name:'Fraise',emoji:'🍓',desc:'Une fraise. C\'est un fruit rouge.',lvl:'C'},
+      {name:'Bleuets',emoji:'🫐',desc:'Des bleuets bleus.',lvl:'C'},
       {name:'Raisin',emoji:'🍇',desc:'Du raisin. Il est violet.',lvl:'D'},
       {name:'Cerise',emoji:'🍒',desc:'Deux cerises rouges.',lvl:'D'},
       {name:'Poire',emoji:'🍐',desc:'Une poire verte.',lvl:'D'},
@@ -1627,6 +1637,7 @@ const G = {
     foods:[
       {name:'Oeuf',emoji:'🥚',desc:'Un oeuf. Il donne de la force.',lvl:'C'},
       {name:'Riz',emoji:'🍚',desc:'Du riz blanc.',lvl:'C'},
+      {name:'Bleuets',emoji:'🫐',desc:'Des bleuets bleus.',lvl:'C'},
       {name:'Crepe',emoji:'🥞',desc:'Une crepe avec du miel.',lvl:'D'},
       {name:'Salade',emoji:'🥗',desc:'Une salade verte.',lvl:'D'},
       {name:'Patate',emoji:'🥔',desc:'Une patate brune.',lvl:'C'},
@@ -1652,6 +1663,7 @@ const G = {
       {name:'Oeuf',emoji:'🥚',cat:'food',desc:'Un oeuf. Il donne de la force.',lvl:'C',r:'common'},
       {name:'Riz',emoji:'🍚',cat:'food',desc:'Du riz blanc.',lvl:'C',r:'common'},
       {name:'Patate',emoji:'🥔',cat:'food',desc:'Une patate brune.',lvl:'C',r:'common'},
+      {name:'Bleuets',emoji:'🫐',cat:'food',desc:'Des bleuets bleus.',lvl:'C',r:'common'},
       {name:'Voiture',emoji:'🚗',cat:'toy',desc:'Une voiture rouge.',lvl:'C',r:'common'},
       {name:'Train',emoji:'🚂',cat:'toy',desc:'Un train qui roule.',lvl:'C',r:'common'},
       {name:'Puzzle',emoji:'🧩',cat:'toy',desc:'Un puzzle avec plusieurs pieces.',lvl:'D',r:'uncommon'},
@@ -1680,6 +1692,7 @@ const G = {
       C:[
         {it:['oeuf','riz'],em:['🥚','🍚'],dis:['pain','ballon','carotte','lait']},
         {it:['patate','jus'],em:['🥔','🧃'],dis:['eau','banane','balle','orange']},
+        {it:['bleuets','carotte'],em:['🫐','🥕'],dis:['pain','lait','balle','eau']},
       ],
       D:[
         {it:['crepe','salade','miel'],em:['🥞','🥗','🍯'],dis:['bonbon','riz','pizza']},
@@ -1699,6 +1712,8 @@ const G = {
     starterInv:[
       {name:'Oeuf',emoji:'🥚',cat:'food',desc:'Un oeuf. Il donne de la force.',lvl:'C'},
       {name:'Jus',emoji:'🧃',cat:'food',desc:'Du jus de pomme.',lvl:'C'},
+      {name:'Carotte',emoji:'🥕',cat:'food',desc:'Une carotte orange.',lvl:'C'},
+      {name:'Bleuets',emoji:'🫐',cat:'food',desc:'Des bleuets bleus.',lvl:'C'},
       {name:'Voiture',emoji:'🚗',cat:'toy',desc:'Une voiture rouge.',lvl:'C'},
       {name:'Dinosaure',emoji:'🦖',cat:'toy',desc:'Un dinosaure qui rugit.',lvl:'C'},
     ],
@@ -1759,13 +1774,10 @@ const G = {
   expeditionBlockReason(){
     if(this._expedLaunching)return'Le sac est déjà prêt!';
     if(this.curScr!=='care')return'';
-    if(this._busy)return'Bibit finit son activité.';
-    if(this.tutorialActive())return'Finis le guide ou passe-le pour partir.';
-    if(this.overlayOpen())return'Ferme cette fenêtre avant de partir.';
     return'';
   },
   syncRoomButtons(){
-    const locked=this.curScr!=='care'||!!this.expeditionBlockReason();
+    const locked=this.curScr!=='care'||this._expedLaunching;
     ['room-exped'].forEach(id=>{
       const el=document.getElementById(id);
       if(el)el.classList.toggle('disabled',locked);
@@ -1811,7 +1823,10 @@ const G = {
       const clothId=this.s.wardrobe.wearing[slot];
       const item=clothId?this.getCloth(clothId):null;
       const el=document.getElementById('cloth-'+slot);
-      if(el)el.textContent=slot==='bottom'&&clothId==='couche'?'':(item?item.emoji:'');
+      if(el){
+        el.textContent=slot==='bottom'&&clothId==='couche'?'':(item?item.emoji:'');
+        el.classList.toggle('soiled',slot==='bottom'&&this.s.potty.dirty&&clothId&&clothId!=='couche');
+      }
     });
     const diaper=document.getElementById('bb-diaper');
     if(diaper)diaper.classList.toggle('off',this.s.wardrobe.wearing.bottom!=='couche');
@@ -1844,13 +1859,10 @@ const G = {
   },
   applyAvatar(){
     const av=this.getAvatar();
-    const body=document.getElementById('bb-body');
-    if(body)body.style.background=`linear-gradient(145deg, ${av.color1}, ${av.color2})`;
-    document.querySelectorAll('.bb-arm').forEach(arm=>{arm.style.background=`linear-gradient(145deg, ${av.armColor1}, ${av.armColor2})`;});
     const avatarEl=document.getElementById('hud-avatar-emoji');if(avatarEl)avatarEl.textContent=av.emoji;
     const avatarName=document.getElementById('hud-avatar-name');if(avatarName)avatarName.textContent=av.name;
     const avatarDesc=document.getElementById('hud-avatar-desc');if(avatarDesc)avatarDesc.textContent=av.desc;
-    this.renderClothes();
+    this.renderClothes();this.paintBibit();
   },
   renderPickScreen(){
     const grid=document.getElementById('pick-grid');if(!grid)return;
@@ -1962,6 +1974,7 @@ const G = {
           wearing:{...this.s.wardrobe.wearing,...((data.wardrobe||{}).wearing||{})},
           owned:Array.isArray((data.wardrobe||{}).owned)?[...(data.wardrobe||{}).owned]:[...this.s.wardrobe.owned],
         },
+        mutation:{...this.s.mutation,...(data.mutation||{})},
         traits:{...this.s.traits,...data.traits},
         mastery:{...this.s.mastery,...data.mastery},
         inv:Array.isArray(data.inv)&&data.inv.length?data.inv:this.s.inv,
@@ -2045,6 +2058,8 @@ const G = {
     },0);
   },
   styleSummary(){
+    const mutation=this.dominantMutation();
+    if(mutation&&mutation.value>=5)return ({orange:'Bibit orange',blue:'Bibit bleu',pink:'Bibit rose',green:'Bibit vert',gold:'Bibit doré'})[mutation.key]||'Bibit magique';
     const score=this.outfitScore();
     if(score>=5)return'Look legendaire';
     if(score>=4)return'Tenue brillante';
@@ -2092,7 +2107,7 @@ const G = {
   foodEffect(name){
     const plain=this.normText(name);
     if(['lait','fromage','yogourt','oeuf','riz','patate','sandwich','pizza','spaghetti'].includes(plain))return{faim:30,joie:4,energie:8,propre:0,trait:'force',traitGain:2,label:'repas costaud',pointBonus:2};
-    if(['eau','jus','brocoli','concombre','salade','soupe','haricots','mais'].includes(plain))return{faim:18,joie:5,energie:4,propre:7,trait:'esprit',traitGain:2,label:'repas frais',pointBonus:1};
+    if(['eau','jus','brocoli','concombre','salade','soupe','haricots','mais','bleuets'].includes(plain))return{faim:18,joie:5,energie:4,propre:7,trait:'esprit',traitGain:2,label:plain==='bleuets'?'snack bleu':'repas frais',pointBonus:1};
     if(['gateau','biscuit','chocolat','creme glacee','miel','bonbon','crepe'].includes(plain))return{faim:16,joie:15,energie:3,propre:-2,trait:'charme',traitGain:2,label:'miam sucre',pointBonus:2};
     if(['pomme','banane','orange','fraise','raisin','cerise','poire','pasteque','carotte','tomate'].includes(plain))return{faim:22,joie:10,energie:6,propre:0,trait:'vitesse',traitGain:2,label:'snack rapide',pointBonus:1};
     return{faim:22,joie:7,energie:4,propre:0,trait:this.foodTrait(name),traitGain:1,label:'bon repas',pointBonus:1};
@@ -2110,6 +2125,7 @@ const G = {
     if(fx.joie)parts.push(`${fx.joie>0?'+':''}${fx.joie} joie`);
     if(fx.energie)parts.push(`${fx.energie>0?'+':''}${fx.energie} energie`);
     if(fx.propre)parts.push(`${fx.propre>0?'+':''}${fx.propre} propre`);
+    const pigment=this.foodPigment(name);if(pigment)parts.push(pigment.emoji);
     parts.push(meta.icon);
     return parts.join(' • ');
   },
@@ -2144,6 +2160,113 @@ const G = {
         setTimeout(()=>el.remove(),900);
       },i*80);
     }
+  },
+  hexToRgb(hex){
+    const clean=String(hex||'').replace('#','');
+    const full=clean.length===3?clean.split('').map(c=>c+c).join(''):clean;
+    const int=parseInt(full,16);
+    return {r:(int>>16)&255,g:(int>>8)&255,b:int&255};
+  },
+  rgbToHex({r,g,b}){
+    const toHex=v=>Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0');
+    return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+  },
+  mixHex(a,b,t){
+    const ra=this.hexToRgb(a),rb=this.hexToRgb(b),m=Math.max(0,Math.min(1,t));
+    return this.rgbToHex({r:ra.r+(rb.r-ra.r)*m,g:ra.g+(rb.g-ra.g)*m,b:ra.b+(rb.b-ra.b)*m});
+  },
+  foodPigment(name){
+    const plain=this.normText(name);
+    const map={
+      orange:{foods:['carotte','orange','croissant','patate'],c1:'#FFD07B',c2:'#FF8A2B',arm1:'#FFC372',arm2:'#FF7A1B',aura:'rgba(255,151,55,.52)',toast:'Bibit devient orange!',emoji:'🧡'},
+      blue:{foods:['bleuets','raisin','eau'],c1:'#9ED4FF',c2:'#4A67FF',arm1:'#8EC3FF',arm2:'#4560E8',aura:'rgba(88,116,255,.48)',toast:'Bibit devient bleu!',emoji:'💙'},
+      pink:{foods:['fraise','cerise','yogourt'],c1:'#FFC0D5',c2:'#FF6FA7',arm1:'#FFB0CB',arm2:'#FF5F97',aura:'rgba(255,111,167,.42)',toast:'Bibit rosit de bonheur!',emoji:'🩷'},
+      green:{foods:['brocoli','salade','concombre','haricots'],c1:'#BFEFA5',c2:'#58C86A',arm1:'#B1E89C',arm2:'#4FB95F',aura:'rgba(92,208,102,.38)',toast:'Bibit verdit comme une petite plante!',emoji:'💚'},
+      gold:{foods:['miel','gateau','bonbon','chocolat','creme glacee'],c1:'#FFE48A',c2:'#FFB23F',arm1:'#FFDB78',arm2:'#FFA832',aura:'rgba(255,194,64,.48)',toast:'Bibit brille comme un bonbon!',emoji:'💛'},
+    };
+    return Object.entries(map).map(([key,val])=>({key,...val})).find(entry=>entry.foods.includes(plain))||null;
+  },
+  dominantMutation(){
+    const entries=Object.entries(this.s.mutation||{}).sort((a,b)=>b[1]-a[1]);
+    const top=entries[0];
+    if(!top||top[1]<2)return null;
+    const data=this.foodPigment(top[0])||{
+      orange:{key:'orange',c1:'#FFD07B',c2:'#FF8A2B',arm1:'#FFC372',arm2:'#FF7A1B',aura:'rgba(255,151,55,.52)',emoji:'🧡'},
+      blue:{key:'blue',c1:'#9ED4FF',c2:'#4A67FF',arm1:'#8EC3FF',arm2:'#4560E8',aura:'rgba(88,116,255,.48)',emoji:'💙'},
+      pink:{key:'pink',c1:'#FFC0D5',c2:'#FF6FA7',arm1:'#FFB0CB',arm2:'#FF5F97',aura:'rgba(255,111,167,.42)',emoji:'🩷'},
+      green:{key:'green',c1:'#BFEFA5',c2:'#58C86A',arm1:'#B1E89C',arm2:'#4FB95F',aura:'rgba(92,208,102,.38)',emoji:'💚'},
+      gold:{key:'gold',c1:'#FFE48A',c2:'#FFB23F',arm1:'#FFDB78',arm2:'#FFA832',aura:'rgba(255,194,64,.48)',emoji:'💛'},
+    }[top[0]];
+    return {...data,key:top[0],value:top[1],mix:Math.min(.82,top[1]/10)};
+  },
+  nudgeMutation(name){
+    const pigment=this.foodPigment(name);
+    if(!pigment)return null;
+    Object.keys(this.s.mutation).forEach(key=>{
+      this.s.mutation[key]=Math.max(0,(this.s.mutation[key]||0)-(key===pigment.key?0:1));
+    });
+    this.s.mutation[pigment.key]=Math.min(12,(this.s.mutation[pigment.key]||0)+2);
+    const dom=this.dominantMutation();
+    if(dom&&dom.key===pigment.key&&dom.value>=4)this.showToast(pigment.emoji,pigment.toast);
+    return dom;
+  },
+  paintBibit(){
+    const av=this.getAvatar();
+    const body=document.getElementById('bb-body');
+    if(!body)return;
+    const aura=document.getElementById('bb-aura');
+    const mutation=this.dominantMutation();
+    let c1=av.color1,c2=av.color2,a1=av.armColor1,a2=av.armColor2;
+    if(mutation){
+      c1=this.mixHex(c1,mutation.c1,mutation.mix);
+      c2=this.mixHex(c2,mutation.c2,mutation.mix);
+      a1=this.mixHex(a1,mutation.arm1,mutation.mix*.92);
+      a2=this.mixHex(a2,mutation.arm2,mutation.mix*.92);
+    }
+    const messy=this.s.potty.dirty||this.s.needs.propre<25;
+    const tired=this.s.needs.energie<16;
+    const sad=this.s.needs.faim<20||this.s.needs.joie<20;
+    if(messy){c1=this.mixHex(c1,'#B39472',this.s.needs.propre<14?.46:.24);c2=this.mixHex(c2,'#866A4E',this.s.needs.propre<14?.54:.32);}
+    if(tired){c1=this.mixHex(c1,'#CBB8E6',.18);c2=this.mixHex(c2,'#A693D7',.2);}
+    if(sad){c1=this.mixHex(c1,'#C7D2DB',.14);c2=this.mixHex(c2,'#9FB2C3',.16);}
+    body.style.background=`linear-gradient(145deg,${c1},${c2})`;
+    body.style.boxShadow=mutation?`0 14px 38px ${mutation.aura}, inset 0 -6px 16px rgba(0,0,0,.06)`:'0 12px 30px rgba(137,207,240,.45), inset 0 -6px 16px rgba(0,0,0,.04)';
+    document.querySelectorAll('.bb-arm').forEach(arm=>{arm.style.background=`linear-gradient(145deg,${a1},${a2})`;});
+    body.classList.toggle('chromatic',!!mutation);
+    if(aura){
+      aura.style.background=mutation?`radial-gradient(circle, ${mutation.aura} 0%, rgba(255,255,255,0) 72%)`:'none';
+      aura.style.opacity=mutation?String(Math.min(.92,.24+mutation.mix)):'0';
+    }
+  },
+  giftOpenPlayPack(){
+    if(this.s.sandboxGifted)return;
+    const pack=[
+      {name:'Carotte',emoji:'🥕',cat:'food',desc:'Une carotte orange.',lvl:'C'},
+      {name:'Bleuets',emoji:'🫐',cat:'food',desc:'Des bleuets bleus.',lvl:'C'},
+    ];
+    pack.forEach(item=>{
+      if(!this.s.inv.some(entry=>entry.cat===item.cat&&entry.name===item.name))this.s.inv.push({...item});
+    });
+    this.s.sandboxGifted=true;
+  },
+  queueAction(kind,payload,label,icon='✨'){
+    this._queuedAction={kind,payload};
+    this.showToast(icon,`${label} ensuite`);
+  },
+  flushQueuedAction(){
+    if(!this._queuedAction||this._busy||this.curScr!=='care'||this._expedLaunching)return;
+    if(this.overlayOpen())return;
+    const next=this._queuedAction;
+    this._queuedAction=null;
+    setTimeout(()=>{
+      if(next.kind==='spot')this.goSpot(next.payload,true);
+      if(next.kind==='exped')this.goExped(true);
+    },120);
+  },
+  becomeIdle(){
+    this._busy=false;
+    this.syncRoomButtons();
+    this.flushQueuedAction();
   },
   languageSummary(){
     const lvlText={C:'Mots courts',D:'Phrases reliees',E:'Langage riche',F:'Expression avancee'};
@@ -2464,7 +2587,7 @@ const G = {
     this.updateNeeds();
     setTimeout(()=>{
       this.say('slept');this.particles('☀️',3);this.updateBB();this.earnPoints(reward.points,reward.note,15,28);this.registerCare();
-      this.moveTo('center',()=>{this._busy=false;this.syncRoomButtons();});
+      this.moveTo('center',()=>this.becomeIdle());
     },400);
   },
   tutorialSteps(){return[
@@ -2492,18 +2615,12 @@ const G = {
     document.getElementById('care').classList.remove('potty-alert');
   },
   startTutorial(){
-    clearTimeout(this._pottyT);clearTimeout(this._eventT);clearTimeout(this._pottyPhaseT);
     this.prepareTutorialStep();
   },
   prepareTutorialStep(){
     const step=this.currentTutorialStep();
     if(!step){this.finishTutorial();return;}
     this.clearTutorialHighlight();this.clearTutorialPotty();
-    if(step.key==='feed')this.s.needs.faim=Math.min(this.s.needs.faim,18);
-    if(step.key==='wash')this.s.needs.propre=Math.min(this.s.needs.propre,18);
-    if(step.key==='play')this.s.needs.joie=Math.min(this.s.needs.joie,18);
-    if(step.key==='potty')this.primeTutorialPotty();
-    this.updateNeeds();this.updateBB();
     const target=document.getElementById('spot-'+step.spot);if(target)target.classList.add('tutorial-target');
     const ov=document.getElementById('tutorial-ov');const arrow=document.getElementById('tutorial-arrow');
     document.getElementById('tutorial-step').textContent=`Petit guide ${this.s.tutorialStep+1}/4`;
@@ -2765,7 +2882,7 @@ const G = {
   foodTrait(name){
     const groups={
       force:['lait','fromage','yogourt','oeuf','riz','patate','sandwich','pizza','spaghetti'],
-      esprit:['eau','jus','brocoli','concombre','salade','soupe','haricots','mais'],
+      esprit:['eau','jus','brocoli','concombre','salade','soupe','haricots','mais','bleuets'],
       charme:['fraise','cerise','gateau','biscuit','chocolat','creme glacee','miel','bonbon','crepe'],
       vitesse:['pomme','banane','orange','raisin','poire','pasteque','carotte'],
     };
@@ -2842,6 +2959,8 @@ const G = {
     if(this._started)return;
     this._started=true;
     this.SFX.init();this.A.init();const saved=this.load();this.normalizeContent();this.applyAwayState();this.bindHiddenDashboard();this.updateSeason();
+    this.giftOpenPlayPack();
+    this.s.tutorialDone=true;this.s.tutorialStep=0;
     if(!this.s.dailyVisits)this.s.dailyVisits=1;
     this._sessionStart=Date.now();
     if(saved&&saved.avatar)this.enterCare(this._returnText?'return':'idle');
@@ -2895,7 +3014,7 @@ const G = {
     body.classList.toggle('embarrassed',this.s.potty.dirty||this.s.needs.propre<14);
     body.classList.toggle('styled',look>=2);
     body.classList.toggle('sparkly-fit',look>=4);
-    this.renderClothes();
+    this.paintBibit();this.renderClothes();
   },
   updateNeeds(){
     const n=this.s.needs;
@@ -2915,7 +3034,6 @@ const G = {
     document.getElementById('spot-bed').classList.toggle('needs-attn',n.energie<25);
   },
   decay(){
-    if(this.tutorialActive())return;
     const n=this.s.needs,t=this.s.traits;
     const perks=this.activePerks();
     const dm=this.getPace().decayMult;
@@ -2930,7 +3048,6 @@ const G = {
     this.updateNeeds();this.updateBB();
   },
   checkState(){
-    if(this.tutorialActive())return;
     if(this.curScr!=='care'||this.s.potty.phase||this._busy)return;
     const n=this.s.needs;
     if(n.faim<18&&Math.random()>.84)this.say('hungry');
@@ -2976,9 +3093,7 @@ const G = {
 
   // ===== ROOM INTERACTIONS =====
   goSpot(spot){
-    if(this._busy){this.showBusyHint();return;}
-    const tutorial=this.currentTutorialStep();
-    if(this.tutorialActive()&&tutorial&&spot!==tutorial.spot){this.showToast('👆','Suis la flèche jaune');return;}
+    if(this._busy){this.queueAction('spot',spot,{bed:'Dodo',potty:'Pot',food:'Manger',bath:'Bain',closet:'Habiller',play:'Jouer'}[spot]||'Ça',spot==='potty'?'🚽':'✨');return;}
     switch(spot){
       case 'bed':this.doSleep();break;
       case 'potty':this.pottyTap();break;
@@ -3040,7 +3155,7 @@ const G = {
       this.updateNeeds();this.s.stats.washed++;
       if(this.s.stats.washed===5)this.unlock('clean5','Tout propre!','✨');
       setTimeout(()=>{this.say('washed');this.particles('✨',4);this.updateBB();this.earnPoints(reward.points,reward.note,72,28);this.registerCare();
-        this.moveTo('center',()=>{this._busy=false;this.tutorialProgress('wash');});},2000);
+        this.moveTo('center',()=>{this.becomeIdle();this.tutorialProgress('wash');});},2000);
     });
   },
 
@@ -3073,11 +3188,13 @@ const G = {
       this.s.needs.joie=Math.min(100,this.s.needs.joie+fx.joie+(perks.joyBoost||0));
       this.s.needs.energie=Math.min(100,this.s.needs.energie+(fx.energie||0));
       this.s.needs.propre=Math.max(0,Math.min(100,this.s.needs.propre+(fx.propre||0)));
+      this.nudgeMutation(name);
+      this.paintBibit();
       this.earnTrait(fx.trait,fx.traitGain,52,34);
       this.updateNeeds();this.s.stats.fed++;
       if(this.s.stats.fed===1)this.unlock('first_feed','Premier repas!','🍎');
       if(this.s.stats.fed===10)this.unlock('gastro','Gastronome!','👨‍🍳');
-      setTimeout(()=>{this.say('fed');this.updateBB();this.earnPoints(reward.points+(fx.pointBonus||0),fx.label,52,28);this.registerCare();this.moveTo('center',()=>{this._busy=false;this.tutorialProgress('feed');});},1500);
+      setTimeout(()=>{this.say('fed');this.updateBB();this.earnPoints(reward.points+(fx.pointBonus||0),fx.label,52,28);this.registerCare();this.moveTo('center',()=>{this.becomeIdle();this.tutorialProgress('feed');});},1500);
     });
   },
 
@@ -3112,7 +3229,7 @@ const G = {
       this.s.needs.propre=Math.max(0,Math.min(100,this.s.needs.propre+(fx.propre||0)));
       this.earnTrait(fx.trait,fx.traitGain,88,34);
       this.updateNeeds();this.s.stats.played++;
-      setTimeout(()=>{this.say('played');this.updateBB();this.earnPoints(reward.points+(fx.pointBonus||0)+(perks.playBonus||0),fx.label,88,28);this.registerCare();this.moveTo('center',()=>{this._busy=false;this.tutorialProgress('play');});},2000);
+      setTimeout(()=>{this.say('played');this.updateBB();this.earnPoints(reward.points+(fx.pointBonus||0)+(perks.playBonus||0),fx.label,88,28);this.registerCare();this.moveTo('center',()=>{this.becomeIdle();this.tutorialProgress('play');});},2000);
     });
   },
   openWardrobe(slot='top'){
@@ -3145,7 +3262,6 @@ const G = {
     const item=this.getCloth(clothId);if(!item)return;
     this.ensureWardrobe();
     if(!this.s.wardrobe.owned.includes(clothId))return;
-    if(item.slot==='bottom'&&this.s.stage<2&&clothId!=='couche'){this.showToast('🚽','Après le pot!');return;}
     if(this.s.wardrobe.wearing[item.slot]===clothId){this.unequipSlot(item.slot);return;}
     this.s.wardrobe.wearing[item.slot]=clothId;
     this.renderClothes();this.renderWardrobe(item.slot);
@@ -3174,7 +3290,7 @@ const G = {
       this._spotMode='';
       this._mini=null;
       this.syncRoomButtons();
-      this.moveTo('center',()=>{this._busy=false;this.syncRoomButtons();});
+      this.moveTo('center',()=>this.becomeIdle());
       return;
     }
     this._spotMode='';
@@ -3183,7 +3299,6 @@ const G = {
 
   // ===== POTTY SYSTEM =====
   schedulePotty(base){
-    if(this.tutorialActive())return;
     if(this.s.potty.progress>=this.s.potty.goal||this.s.stage>=2)return;
     clearTimeout(this._pottyT);this._pottyT=setTimeout(()=>this.pottyStart(),this.paceTime((base||20000)+Math.random()*15000));
   },
@@ -3252,7 +3367,7 @@ const G = {
           if(this.s.potty.progress>=this.s.potty.goal){
             setTimeout(()=>this.graduate(),1500);
           }else{
-            this.moveTo('center',()=>{this.s.potty.phase=null;this._busy=false;this.updateBB();this.schedulePotty();this.tutorialProgress('potty');});
+            this.moveTo('center',()=>{this.s.potty.phase=null;this.becomeIdle();this.updateBB();this.schedulePotty();this.tutorialProgress('potty');});
           }
         },1500);
       },600);
@@ -3284,7 +3399,7 @@ const G = {
 
   // ===== EVENTS =====
   _eventActive:false,
-  scheduleEvent(base){if(this.tutorialActive())return;clearTimeout(this._eventT);this._eventT=setTimeout(()=>this.triggerEvent(),this.paceTime((base||30000)+Math.random()*20000));},
+  scheduleEvent(base){clearTimeout(this._eventT);this._eventT=setTimeout(()=>this.triggerEvent(),this.paceTime((base||30000)+Math.random()*20000));},
   triggerEvent(){
     if(this.curScr!=='care'||this.s.potty.phase||this._eventActive||this.s.potty.dirty||this._waitDiaper||this._busy){this.scheduleEvent(12000);return;}
     const ev=this.C.events[Math.floor(Math.random()*this.C.events.length)];
@@ -3358,7 +3473,7 @@ const G = {
     document.getElementById('bb').classList.add('stage2');
     this.showBubble('Plus de couche! Je suis grand! 🎉','happy');this.SFX.success();this.particles('⭐',6);this.updateBB();this.updateHUD();
     this.unlock('graduated','Pas de couche!','🎓');
-    this.moveTo('center',()=>{this._busy=false;});
+    this.moveTo('center',()=>this.becomeIdle());
     this.save();
     setTimeout(()=>{this.showBubble('Je veux marcher!','happy');this.A.say('Je suis Le Petit maintenant!',this.voiceRate());},4000);
     setTimeout(()=>this.showStageTease(),1400);
@@ -3382,6 +3497,8 @@ const G = {
   goExped(){
     const reason=this.expeditionBlockReason();
     if(reason){this.showToast('🗺️',reason);return;}
+    if(this._busy){this.queueAction('exped',null,'Aventure','🗺️');return;}
+    if(this._spotMode==='wardrobe'||this._spotMode==='mini'||this._spotMode==='food'||this._spotMode==='toy')this.closeSpotPanel();
     if(this.s.potty.phase&&this.s.potty.phase!=='success'&&this.s.potty.phase!=='fail'){
       clearTimeout(this._pottyPhaseT);this.s.potty.phase=null;
       document.getElementById('spot-potty').classList.remove('urgent');document.getElementById('care').classList.remove('potty-alert');}
