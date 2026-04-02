@@ -379,14 +379,49 @@ body{background:var(--wall);}
 .bb-diaper.dirty{background:#C8B888;}.bb-diaper.dirty::before,.bb-diaper.dirty::after{background:#B8A070;}
 .bb-diaper.off{opacity:0;pointer-events:none;}
 .bb-clothes{position:absolute;inset:0;pointer-events:none;z-index:3;}
-.bb-cloth{position:absolute;text-align:center;transition:opacity .3s,transform .3s;filter:drop-shadow(0 2px 3px rgba(0,0,0,.12));}
+.bb-cloth{
+  position:absolute;text-align:center;line-height:1;white-space:nowrap;
+  transition:opacity .3s,transform .3s,filter .3s;filter:drop-shadow(0 2px 3px rgba(0,0,0,.12));
+  --dx:0px;--dy:0px;--sc:1;--rot:0deg;--z:3;
+  z-index:var(--z);transform-origin:center;
+}
 .bb-cloth:empty{display:none;}
-.bb-cloth.soiled{filter:sepia(.85) saturate(1.15) brightness(.74) drop-shadow(0 2px 4px rgba(92,62,34,.3));transform:translateY(2px) scale(.96);}
-.bb-bottom{bottom:4px;left:50%;transform:translateX(-50%);font-size:32px;}
-.bb-top{top:56%;left:50%;transform:translate(-50%,-50%);font-size:30px;}
-.bb-head{top:-12px;left:50%;transform:translateX(-50%);font-size:26px;}
-.bb-feet{bottom:-8px;left:50%;transform:translateX(-50%);font-size:22px;}
-.bb-accessory{top:32%;right:-8px;font-size:22px;}
+.bb-cloth.soiled{filter:sepia(.85) saturate(1.15) brightness(.74) drop-shadow(0 2px 4px rgba(92,62,34,.3));opacity:.9;}
+.bb-bottom{
+  bottom:6px;left:50%;font-size:34px;
+  transform:translate(calc(-50% + var(--dx)), var(--dy)) scale(var(--sc)) rotate(var(--rot));
+}
+.bb-top{
+  top:57%;left:50%;font-size:36px;
+  transform:translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(var(--sc)) rotate(var(--rot));
+}
+.bb-head{
+  top:-10px;left:50%;font-size:30px;
+  transform:translate(calc(-50% + var(--dx)), var(--dy)) scale(var(--sc)) rotate(var(--rot));
+}
+.bb-feet{
+  bottom:-8px;left:50%;font-size:24px;
+  transform:translate(calc(-50% + var(--dx)), var(--dy)) scale(var(--sc)) rotate(var(--rot));
+}
+.bb-accessory{
+  top:32%;right:-8px;font-size:24px;
+  transform:translate(var(--dx), var(--dy)) scale(var(--sc)) rotate(var(--rot));
+}
+.bb-cloth.backpiece{
+  left:50%!important;right:auto!important;top:46%!important;
+  transform:translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(var(--sc)) rotate(var(--rot));
+  z-index:1;
+}
+.bb-cloth.facepiece{
+  left:50%!important;right:auto!important;top:35%!important;
+  transform:translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(var(--sc)) rotate(var(--rot));
+  z-index:6;
+}
+.bb-cloth.neckpiece{
+  left:50%!important;right:auto!important;top:66%!important;
+  transform:translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(var(--sc)) rotate(var(--rot));
+  z-index:4;
+}
 .bb-smell,.bb-pride{position:absolute;opacity:0;pointer-events:none;z-index:6;}
 .bb-smell{font-size:22px;filter:drop-shadow(0 2px 3px rgba(0,0,0,.08));}
 .bb-smell.s1{top:12px;left:-18px;}
@@ -1817,6 +1852,42 @@ const G = {
     if(!this.s.wardrobe.wearing.bottom)this.s.wardrobe.wearing.bottom=this.defaultBottomWear();
     if(this.s.stage>=2&&this.s.wardrobe.owned.includes('culotte')&&this.s.wardrobe.wearing.bottom==='couche')this.s.wardrobe.wearing.bottom='culotte';
   },
+  clothRenderMeta(item){
+    if(!item)return{content:'',className:'',fontSize:'',dx:'0px',dy:'0px',sc:1,rot:'0deg',z:3};
+    const base={
+      content:item.emoji,
+      className:'',
+      fontSize:'',
+      dx:'0px',
+      dy:'0px',
+      sc:1,
+      rot:'0deg',
+      z:item.slot==='top'?2:3
+    };
+    const map={
+      culotte:{dy:'-6px',sc:1.08,fontSize:'40px'},
+      pantalon:{dy:'-2px',sc:1.18,fontSize:'44px'},
+      jupe:{dy:'-12px',sc:1.2,fontSize:'44px'},
+      short:{dy:'-4px',sc:1.12,fontSize:'40px'},
+      tshirt:{dy:'16px',sc:1.48,fontSize:'50px',z:2},
+      chandail:{dy:'18px',sc:1.52,fontSize:'52px',z:2},
+      manteau:{dy:'20px',sc:1.58,fontSize:'54px',z:2},
+      robe:{dy:'20px',sc:1.56,fontSize:'52px',z:2},
+      tuque:{dy:'3px',sc:1.14,fontSize:'32px'},
+      chapeau:{dy:'-2px',sc:1.12,fontSize:'34px'},
+      couronne:{dy:'-4px',sc:1.14,fontSize:'34px'},
+      casque:{dy:'4px',sc:1.12,fontSize:'34px'},
+      bandeau:{dy:'14px',sc:1.08,fontSize:'28px'},
+      souliers:{content:'👟 👟',sc:1.04,fontSize:'24px'},
+      bottes:{content:'🥾 🥾',sc:1.06,fontSize:'25px'},
+      sandales:{content:'🩴 🩴',sc:1.04,fontSize:'24px'},
+      lunettes:{className:'facepiece',dy:'-2px',sc:1.08,fontSize:'24px',z:6},
+      collier:{className:'neckpiece',dy:'0px',sc:1.08,fontSize:'24px',z:4},
+      cape:{className:'backpiece',content:'🦸',dy:'8px',sc:1.34,fontSize:'48px',z:1},
+      ailes:{className:'backpiece',content:'🧚',dy:'4px',sc:1.28,fontSize:'48px',z:1}
+    };
+    return {...base,...(map[item.id]||{})};
+  },
   renderClothes(){
     this.ensureWardrobe();
     ['bottom','top','head','feet','accessory'].forEach(slot=>{
@@ -1824,7 +1895,16 @@ const G = {
       const item=clothId?this.getCloth(clothId):null;
       const el=document.getElementById('cloth-'+slot);
       if(el){
-        el.textContent=slot==='bottom'&&clothId==='couche'?'':(item?item.emoji:'');
+        const meta=this.clothRenderMeta(item);
+        el.classList.remove('backpiece','facepiece','neckpiece');
+        el.textContent=slot==='bottom'&&clothId==='couche'?'':(item?meta.content:'');
+        el.style.setProperty('--dx',meta.dx);
+        el.style.setProperty('--dy',meta.dy);
+        el.style.setProperty('--sc',meta.sc);
+        el.style.setProperty('--rot',meta.rot);
+        el.style.setProperty('--z',meta.z);
+        el.style.fontSize=meta.fontSize||'';
+        if(meta.className)el.classList.add(meta.className);
         el.classList.toggle('soiled',slot==='bottom'&&this.s.potty.dirty&&clothId&&clothId!=='couche');
       }
     });
