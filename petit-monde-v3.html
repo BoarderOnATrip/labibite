@@ -137,11 +137,6 @@ body{background:var(--wall);}
   display:flex;flex-direction:column;align-items:flex-end;gap:8px;
   width:min(46vw,230px);
 }
-.hud-parent{
-  position:absolute;top:-8px;right:-8px;z-index:2;width:46px;height:46px;border:none;border-radius:16px;
-  background:rgba(255,255,255,.92);box-shadow:var(--shadow);font-size:22px;cursor:pointer;
-}
-.hud-parent:active{transform:scale(.95);}
 .hud-card,.traits-card{
   width:100%;
   background:rgba(255,255,255,.82);backdrop-filter:blur(10px);
@@ -277,6 +272,17 @@ body{background:var(--wall);}
 #spot-bath .furn-icon{animation:bath-swish 3.8s ease-in-out infinite;}
 #spot-closet .furn-icon{animation:closet-sway 3.4s ease-in-out infinite;}
 #spot-play .furn-icon{animation:play-pop 2.7s ease-in-out infinite;}
+.room-exped{
+  position:absolute;right:16px;bottom:16px;z-index:15;
+  display:flex;align-items:center;gap:8px;padding:12px 16px;border:none;border-radius:22px;
+  background:linear-gradient(135deg,var(--green),#67B96C);color:#fff;cursor:pointer;
+  box-shadow:var(--shadow-lg);font-family:'Fredoka';font-size:16px;min-height:54px;
+  transition:transform .15s,opacity .15s,filter .15s;animation:exped-glow 2.8s ease-in-out infinite;
+}
+.room-exped span{font-size:14px;line-height:1;}
+.room-exped:active{transform:scale(.96);}
+.room-exped.disabled{opacity:.45;filter:grayscale(.2);animation:none;}
+.room-exped .exped-emoji{font-size:24px;line-height:1;}
 @keyframes bed-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
 @keyframes potty-rock{0%,100%{transform:rotate(0)}35%{transform:rotate(-4deg)}65%{transform:rotate(4deg)}}
 @keyframes food-bob{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-4px) scale(1.03)}}
@@ -444,6 +450,10 @@ body{background:var(--wall);}
 }
 .tutorial-step{font-family:'Fredoka';font-size:12px;color:var(--mint);text-transform:uppercase;letter-spacing:.06em;}
 .tutorial-text{margin-top:6px;font-size:17px;font-weight:700;color:var(--dark);line-height:1.35;}
+.tutorial-skip{
+  margin-top:10px;border:none;border-radius:999px;padding:8px 14px;
+  background:rgba(0,0,0,.06);color:var(--mid);font-family:'Fredoka';font-size:12px;cursor:pointer;
+}
 .tutorial-arrow{
   position:absolute;left:50%;top:56%;transform:translate(-50%,-50%);
   font-size:52px;filter:drop-shadow(0 4px 10px rgba(255,217,61,.55));
@@ -513,6 +523,10 @@ body{background:var(--wall);}
   display:flex;flex-direction:column;align-items:center;gap:3px;
   padding:10px 12px;border-radius:14px;background:var(--warm-bg);
   cursor:pointer;transition:transform .15s;min-width:72px;min-height:88px;justify-content:center;
+}
+.sp-item.sp-special{
+  background:linear-gradient(135deg,rgba(255,217,61,.26),rgba(78,205,196,.22));
+  box-shadow:0 0 0 2px rgba(255,255,255,.55) inset;
 }
 .sp-item:active{transform:scale(.93);}
 .sp-item.equipped{box-shadow:0 0 0 3px rgba(78,205,196,.45);}
@@ -586,7 +600,7 @@ body{background:var(--wall);}
 @keyframes ev-pop{0%{transform:scale(1);opacity:1}100%{transform:scale(2.5);opacity:0}}
 
 /* ===== BOTTOM BAR ===== */
-.bottom-bar{padding:8px 16px 20px;text-align:center;position:relative;z-index:5;background:rgba(255,255,255,.5);}
+.bottom-bar{display:none;padding:8px 16px 20px;text-align:center;position:relative;z-index:5;background:rgba(255,255,255,.5);}
 .btn-bar{
   padding:12px 32px;border:none;border-radius:18px;
   background:var(--green);color:var(--white);
@@ -887,7 +901,6 @@ button,.furn,.sp-item,.mini-choice,.mini-next,.wd-tab,.pace-btn,.btn-bar,.mcell,
       <div class="nd" id="nd-energie"><span class="nd-icon">💤</span><div class="nd-bar"><div class="nd-fill energie" id="nf-energie"></div></div><span class="nd-lbl">Énergie</span></div>
     </div>
     <div class="room-hud">
-      <button class="hud-parent" onclick="G.openDashboard()">👩‍🏫</button>
       <div class="hud-card avatar-card">
         <span class="hud-emoji" id="hud-avatar-emoji">🫧</span>
         <div>
@@ -899,13 +912,13 @@ button,.furn,.sp-item,.mini-choice,.mini-next,.wd-tab,.pace-btn,.btn-bar,.mcell,
       <div class="hud-card score-card">
         <span class="hud-emoji">⭐</span>
         <div>
-          <div class="hud-label">Points</div>
+          <div class="hud-label">Trésors</div>
           <div class="hud-value" id="score-value">0</div>
-          <div class="hud-sub" id="score-note">Service attentionné</div>
+          <div class="hud-sub" id="score-note">Bibit adore ça</div>
         </div>
       </div>
       <div class="hud-card">
-        <div class="hud-label">Langage</div>
+        <div class="hud-label">Bibit Grandit</div>
         <div class="hud-value" id="lang-level">Niveau C</div>
         <div class="hud-sub" id="hud-phase">Petites phrases</div>
       </div>
@@ -953,6 +966,9 @@ button,.furn,.sp-item,.mini-choice,.mini-next,.wd-tab,.pace-btn,.btn-bar,.mcell,
     <div class="furn furn-play" id="spot-play" onclick="G.goSpot('play')">
       <div class="furn-icon">🧸</div><div class="furn-label">Jouer</div><div class="furn-shadow"></div>
     </div>
+    <button class="room-exped" id="room-exped" onclick="G.goExped()">
+      <span class="exped-emoji">🗺️</span><span>Aventure</span>
+    </button>
 
     <!-- Bibit -->
     <div class="bb-wrap" id="bb-wrap" style="left:40%;">
@@ -988,7 +1004,7 @@ button,.furn,.sp-item,.mini-choice,.mini-next,.wd-tab,.pace-btn,.btn-bar,.mcell,
         <div class="story-top">
           <div class="story-badge" id="story-badge">📖</div>
           <div>
-            <div class="story-kicker">Lecture du soir</div>
+            <div class="story-kicker">Histoire magique</div>
             <div class="story-title" id="story-title">Une histoire</div>
             <div class="story-progress" id="story-progress">Page 1/3</div>
           </div>
@@ -1007,6 +1023,7 @@ button,.furn,.sp-item,.mini-choice,.mini-next,.wd-tab,.pace-btn,.btn-bar,.mcell,
       <div class="tutorial-card">
         <div class="tutorial-step" id="tutorial-step">Petit guide</div>
         <div class="tutorial-text" id="tutorial-text">Bienvenue!</div>
+        <button class="tutorial-skip" onclick="event.stopPropagation();G.finishTutorial()">Passer</button>
       </div>
       <div class="tutorial-arrow" id="tutorial-arrow">⬇️</div>
     </div>
@@ -1673,7 +1690,7 @@ const G = {
 
   // ===== SYSTEMS =====
   storageKey:'petit_monde_v3_save',
-  _busy:false,_started:false,_contentReady:false,_returnText:'',_seasonKey:'spring',_seasonLabel:'printemps',
+  _busy:false,_started:false,_contentReady:false,_returnText:'',_seasonKey:'spring',_seasonLabel:'printemps',_expedLaunching:false,_sleepReward:null,
   lvlRank(lvl){return {C:0,D:1,E:2,F:3}[lvl]??0;},
   voiceRate(isWord=false){const map=isWord?{C:.76,D:.84,E:.92,F:.98}:{C:.8,D:.9,E:.98,F:1.03};return map[this.s.lvl]||.85;},
   normText(value){return String(value||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');},
@@ -1681,6 +1698,49 @@ const G = {
   getAvatar(){return this.AVATARS[this.s.avatar]||this.AVATARS.copain;},
   getCloth(id){return this.C.clothes.find(item=>item.id===id)||null;},
   defaultBottomWear(){return this.s.stage>=2&&this.s.wardrobe?.owned?.includes('culotte')?'culotte':'couche';},
+  overlayOpen(){
+    const visible=id=>{
+      const el=document.getElementById(id);
+      return !!(el&&getComputedStyle(el).display!=='none');
+    };
+    return visible('spot-panel')||visible('story-ov')||visible('dash-ov');
+  },
+  showBusyHint(text='Bibit finit quelque chose...'){
+    clearTimeout(this._busyNoteT);
+    this._busyNoteT=setTimeout(()=>this.showToast('🫧',text),80);
+  },
+  expeditionBlockReason(){
+    if(this._expedLaunching)return'Le sac est déjà prêt!';
+    if(this.curScr!=='care')return'';
+    if(this._busy)return'Bibit finit son activité.';
+    if(this.tutorialActive())return'Finis le guide ou passe-le pour partir.';
+    if(this.overlayOpen())return'Ferme cette fenêtre avant de partir.';
+    return'';
+  },
+  syncRoomButtons(){
+    const locked=this.curScr!=='care'||!!this.expeditionBlockReason();
+    ['room-exped'].forEach(id=>{
+      const el=document.getElementById(id);
+      if(el)el.classList.toggle('disabled',locked);
+    });
+  },
+  avatarPlayCard(){
+    const mech=this.getAvatar().mechanic;
+    if(mech==='race')return{icon:'⚡',title:'Course éclair',desc:'Bibit veut filer vers le bon mot.'};
+    if(mech==='teach')return{icon:'📖',title:'Bibit est confus',desc:'Aide-le à retrouver le bon jouet.'};
+    if(mech==='puzzle')return{icon:'🔮',title:'Mystère surprise',desc:'Découvre un petit secret du Sage.'};
+    if(mech==='coach')return{icon:'🌟',title:'Coup de boost',desc:'Coach lance un mini défi rigolo.'};
+    return null;
+  },
+  launchAvatarPlay(){
+    const mech=this.getAvatar().mechanic;
+    this.closeSpotPanel();
+    if(mech==='race')return this.startWordRace();
+    if(mech==='teach')return this.startTeachingSession();
+    if(mech==='puzzle')return this.startSagePuzzle();
+    if(mech==='coach')return this.startCoachReading();
+    return this.showToyPicker();
+  },
   ensureWardrobe(){
     const base={owned:['couche'],wearing:{bottom:null,top:null,head:null,feet:null,accessory:null}};
     if(!this.s.wardrobe)this.s.wardrobe={...base,wearing:{...base.wearing}};
@@ -1942,6 +2002,7 @@ const G = {
       if(el)el.textContent=this.s.traits[key];
     });
     this.updateExpMeta();
+    this.syncRoomButtons();
   },
   updateDashboard(){
     const playEl=document.getElementById('dash-playtime');if(!playEl)return;
@@ -1985,8 +2046,8 @@ const G = {
     ].map(text=>`<span class="dash-pill">${text}</span>`).join('');
     document.getElementById('dash-return-note').textContent=this._returnText?`Dernier retour: ${this._returnText}`:'Le Bibit se souvient quand Carmen revient après une pause.';
   },
-  openDashboard(){this.updateDashboard();this.renderPacePicker();document.getElementById('dash-ov').style.display='flex';},
-  closeDashboard(){document.getElementById('dash-ov').style.display='none';},
+  openDashboard(){this.updateDashboard();this.renderPacePicker();document.getElementById('dash-ov').style.display='flex';this.syncRoomButtons();},
+  closeDashboard(){document.getElementById('dash-ov').style.display='none';this.syncRoomButtons();},
   renderPacePicker(){
     const el=document.getElementById('pace-picker');if(!el)return;
     el.innerHTML=Object.entries(this.PACES).map(([id,p])=>
@@ -2121,6 +2182,7 @@ const G = {
     this._storySession={story,page:0,phase:'page',selected:null,correct:false,feedback:'',reward,lastSpeak:'',startedAt:Date.now(),pagesSeen:[]};
     this.SFX.pageTurn();
     this.renderStory();
+    this.syncRoomButtons();
   },
   advanceStory(){
     const session=this._storySession;if(!session)return;
@@ -2158,6 +2220,36 @@ const G = {
   closeStory(){
     const ov=document.getElementById('story-ov');if(ov)ov.style.display='none';
     this._storySession=null;
+    this.syncRoomButtons();
+  },
+  showSleepChoice(reward){
+    this._sleepReward=reward;
+    this._spotMode='sleep-choice';
+    document.getElementById('sp-title').textContent='🌙 Bonne nuit';
+    const items=document.getElementById('sp-items');
+    items.classList.remove('wardrobe');
+    items.innerHTML=`<div class="mini-wrap"><div class="mini-card"><div class="mini-emoji">💤</div><div class="mini-prompt">Bibit se blottit dans son lit.</div><div class="mini-sub">Tu veux juste le border ou lui raconter une petite histoire?</div></div><div class="mini-choices"><button class="mini-choice" onclick="G.sleepNow()">💤 Dodo direct</button><button class="mini-choice" onclick="G.sleepStory()">📖 Petite histoire</button></div></div>`;
+    document.getElementById('spot-backdrop').style.display='block';
+    document.getElementById('spot-panel').style.display='flex';
+    this.syncRoomButtons();
+  },
+  sleepNow(){
+    const reward=this._sleepReward;
+    this._sleepReward=null;
+    document.getElementById('spot-backdrop').style.display='none';
+    document.getElementById('spot-panel').style.display='none';
+    this._spotMode='';
+    this.syncRoomButtons();
+    this.finishSleepReward(reward);
+  },
+  sleepStory(){
+    const reward=this._sleepReward;
+    this._sleepReward=null;
+    document.getElementById('spot-backdrop').style.display='none';
+    document.getElementById('spot-panel').style.display='none';
+    this._spotMode='';
+    this.syncRoomButtons();
+    this.startBedtimeStory(reward);
   },
   skipStory(){
     const session=this._storySession;if(!session)return;
@@ -2203,7 +2295,7 @@ const G = {
     this.updateNeeds();
     setTimeout(()=>{
       this.say('slept');this.particles('☀️',3);this.updateBB();this.earnPoints(reward.points,reward.note,15,28);this.registerCare();
-      this.moveTo('center',()=>{this._busy=false;});
+      this.moveTo('center',()=>{this._busy=false;this.syncRoomButtons();});
     },400);
   },
   tutorialSteps(){return[
@@ -2263,6 +2355,7 @@ const G = {
     this.clearTutorialHighlight();this.clearTutorialPotty();
     this.showToast('🌟','Bravo! Tu peux jouer toute seule.');
     this.schedulePotty(12000);this.scheduleEvent(15000);this.save();
+    this.syncRoomButtons();
     setTimeout(()=>this.say('idle'),700);
   },
   startWordRace(){
@@ -2271,7 +2364,7 @@ const G = {
     this._busy=true;
     this.moveTo('play',()=>{
       this.wordPop('Course',88,35);
-      this._mini={type:'word',pool,total:5,round:0,correct:0,score:0,fastest:null,feedback:'',locked:false};
+      this._mini={type:'word',pool,total:1,round:0,correct:0,score:0,fastest:null,feedback:'',locked:false};
       this.nextWordRaceRound();
     });
   },
@@ -2281,8 +2374,8 @@ const G = {
     m.question={correct,options:this.pickOptions(correct,m.pool,3),start:Date.now()};
     m.feedback='';m.locked=false;m.round++;
     const best=this.s.avatarData.champion.bestWordRaceMs;
-    this.openMiniPanel('⚡ Course de mots',`<div class="mini-wrap"><div class="mini-card"><div class="mini-progress">Manche ${m.round}/${m.total}</div><div class="mini-emoji">${correct.emoji}</div><div class="mini-prompt">Quel mot va avec cette image?</div><div class="mini-sub">${best?`Meilleur temps: ${best} ms`:'Plus rapide = plus de points'}</div></div><div class="mini-choices">${m.question.options.map(item=>`<button class="mini-choice" onclick="G.pickWordRace('${item.name.replace(/'/g,"\\'")}')">${item.name}</button>`).join('')}</div><div class="mini-feedback">Lis vite et choisis le bon mot.</div></div>`);
-    this.A.say('Quel mot va avec cette image?',this.voiceRate());
+    this.openMiniPanel('⚡ Course éclair',`<div class="mini-wrap"><div class="mini-card"><div class="mini-progress">Éclair ${m.round}/${m.total}</div><div class="mini-emoji">${correct.emoji}</div><div class="mini-prompt">Attrape le bon mot!</div><div class="mini-sub">${best?`Record: ${best} ms`:'Bibit fonce vers la bonne réponse.'}</div></div><div class="mini-choices">${m.question.options.map(item=>`<button class="mini-choice" onclick="G.pickWordRace('${item.name.replace(/'/g,"\\'")}')">${item.name}</button>`).join('')}</div><div class="mini-feedback">Un bon mot, un grand sourire.</div></div>`);
+    this.A.say('Attrape le bon mot!',this.voiceRate());
   },
   pickWordRace(name){
     const m=this._mini;if(!m||m.type!=='word'||m.locked)return;
@@ -2296,7 +2389,7 @@ const G = {
       if(!best||elapsed<best)this.s.avatarData.champion.bestWordRaceMs=elapsed;
       this.SFX.success();this.A.word(m.question.correct.name);
     }else{this.SFX.fail();}
-    this.openMiniPanel('⚡ Course de mots',`<div class="mini-wrap"><div class="mini-card"><div class="mini-progress">Manche ${m.round}/${m.total}</div><div class="mini-emoji">${m.question.correct.emoji}</div><div class="mini-prompt">${hit?'Bravo!':'Essaie encore demain!'}</div><div class="mini-sub">${hit?`${elapsed} ms`:`Le bon mot était ${m.question.correct.name}.`}</div></div><div class="mini-choices">${m.question.options.map(item=>{const cls=item.name===m.question.correct.name?' good':(item.name===name&&!hit?' bad':'');return `<button class="mini-choice${cls}">${item.name}</button>`;}).join('')}</div></div>`);
+    this.openMiniPanel('⚡ Course éclair',`<div class="mini-wrap"><div class="mini-card"><div class="mini-emoji">${hit?'🏁':'🫧'}</div><div class="mini-prompt">${hit?'Bibit a gagné!':'Bibit a appris le bon mot!'}</div><div class="mini-sub">${hit?`${elapsed} ms`:`Le bon mot était ${m.question.correct.name}.`}</div></div><div class="mini-choices">${m.question.options.map(item=>{const cls=item.name===m.question.correct.name?' good':(item.name===name&&!hit?' bad':'');return `<button class="mini-choice${cls}">${item.name}</button>`;}).join('')}</div></div>`);
     setTimeout(()=>{if(m.round>=m.total)this.finishWordRace();else this.nextWordRaceRound();},700);
   },
   finishWordRace(){
@@ -2305,8 +2398,9 @@ const G = {
     this.updateNeeds();this.s.stats.played++;
     this.earnPoints(12+m.score,'course',88,28);this.earnTrait('vitesse',2,88,34);this.registerCare();
     this.reportSession('⚡','Course de mots',`${m.correct}/${m.total} • ${m.fastest!==null?m.fastest+' ms':'lecture rapide'}`);
-    this.openMiniPanel('⚡ Course de mots',`<div class="mini-wrap"><div class="mini-card"><div class="mini-emoji">🏁</div><div class="mini-prompt">Course terminée!</div><div class="mini-summary">${m.correct}/${m.total} bonnes réponses.${m.fastest!==null?` Meilleur temps: ${m.fastest} ms.`:''}</div></div><button class="mini-next" onclick="G.finishMiniPanel()">Continuer</button></div>`);
+    this.openMiniPanel('⚡ Course éclair',`<div class="mini-wrap"><div class="mini-card"><div class="mini-emoji">🏁</div><div class="mini-prompt">Course terminée!</div><div class="mini-summary">Bibit repart tout content.${m.fastest!==null?` Record: ${m.fastest} ms.`:''}</div></div></div>`);
     this.SFX.fanfare();
+    setTimeout(()=>this.finishMiniPanel(),950);
   },
   startCountRace(fromExped=false){
     const [min,max]=this.s.lvl==='C'?[1,5]:this.s.lvl==='D'?[1,10]:[1,20];
@@ -2353,7 +2447,7 @@ const G = {
     this._busy=true;
     this.moveTo('play',()=>{
       this.wordPop('Apprendre',88,35);
-      this._mini={type:'teach',pool,total:4,round:0,correct:0,feedback:'',locked:false};
+      this._mini={type:'teach',pool,total:1,round:0,correct:0,feedback:'',locked:false};
       this.nextTeachingRound();
     });
   },
@@ -2364,18 +2458,20 @@ const G = {
     const accuracy=this.s.avatarData.eleve.creatureAccuracy||.3;
     const guess=Math.random()<accuracy?correct:options.find(item=>item.name!==correct.name)||options[1];
     m.round++;m.locked=false;m.question={correct,options,guess};
-    this.openMiniPanel('📖 Enseigne-moi',`<div class="mini-wrap"><div class="mini-card"><div class="mini-progress">Leçon ${m.round}/${m.total}</div><div class="mini-emoji">${correct.emoji}</div><div class="mini-prompt">Bibit dit: "C'est ${guess.name}?"</div><div class="mini-sub">Choisis le bon mot pour l'aider.</div></div><div class="mini-grid">${options.map(item=>`<button class="mini-choice" onclick="G.pickTeaching('${item.name.replace(/'/g,"\\'")}')">${item.emoji} ${item.name}</button>`).join('')}</div><div class="mini-feedback">Corrige doucement ton Bibit.</div></div>`);
+    this.openMiniPanel('📖 Bibit est confus',`<div class="mini-wrap"><div class="mini-card"><div class="mini-progress">Aide ${m.round}/${m.total}</div><div class="mini-emoji">${correct.emoji}</div><div class="mini-prompt">Bibit murmure: "C'est ${guess.name}?"</div><div class="mini-sub">Montre-lui doucement le bon mot.</div></div><div class="mini-grid">${options.map(item=>`<button class="mini-choice" onclick="G.pickTeaching('${item.name.replace(/'/g,"\\'")}')">${item.emoji} ${item.name}</button>`).join('')}</div><div class="mini-feedback">Un petit coup de main et Bibit comprend.</div></div>`);
     this.A.say(`C'est ${guess.name}?`,this.voiceRate());
   },
   pickTeaching(name){
     const m=this._mini;if(!m||m.type!=='teach'||m.locked)return;
     const correct=m.question.correct;
-    if(name!==correct.name){this.SFX.fail();this.showToast('🤔','Essaie encore');this.A.say('Hmm... je ne suis pas sûr.',this.voiceRate());return;}
-    m.locked=true;m.correct++;
-    this.s.avatarData.eleve.creatureAccuracy=Math.min(.95,(this.s.avatarData.eleve.creatureAccuracy||.3)+.08);
+    const hit=name===correct.name;
+    m.locked=true;
+    if(hit)m.correct++;
+    this.s.avatarData.eleve.creatureAccuracy=Math.min(.95,(this.s.avatarData.eleve.creatureAccuracy||.3)+(hit ? .08 : .04));
     if(!this.s.avatarData.eleve.wordsTaught.includes(correct.name))this.s.avatarData.eleve.wordsTaught.push(correct.name);
-    this.SFX.success();this.A.say(`Ah oui! C'est ${correct.name}! Merci!`,this.voiceRate());
-    this.openMiniPanel('📖 Enseigne-moi',`<div class="mini-wrap"><div class="mini-card"><div class="mini-emoji">${correct.emoji}</div><div class="mini-prompt">Ah oui! C'est ${correct.name}!</div><div class="mini-summary">Bibit apprend un nouveau mot avec toi.</div></div></div>`);
+    if(hit){this.SFX.success();this.A.say(`Ah oui! C'est ${correct.name}! Merci!`,this.voiceRate());}
+    else{this.SFX.fail();this.A.say(`Presque! C'est ${correct.name}. Merci!`,this.voiceRate());}
+    this.openMiniPanel('📖 Bibit est confus',`<div class="mini-wrap"><div class="mini-card"><div class="mini-emoji">${correct.emoji}</div><div class="mini-prompt">${hit?`Ah oui! C'est ${correct.name}!`:`Presque! C'est ${correct.name}.`}</div><div class="mini-summary">Bibit apprend un nouveau mot avec toi.</div></div></div>`);
     setTimeout(()=>{if(m.round>=m.total)this.finishTeachingSession();else this.nextTeachingRound();},800);
   },
   finishTeachingSession(){
@@ -2383,8 +2479,9 @@ const G = {
     this.s.needs.joie=Math.min(100,this.s.needs.joie+18);this.updateNeeds();this.s.stats.played++;
     this.earnPoints(12+m.correct*2,'leçon',88,28);this.earnTrait('esprit',2,88,34);this.registerCare();
     this.reportSession('📖','Leçon Élève',`${m.correct}/${m.total} • précision ${Math.round((this.s.avatarData.eleve.creatureAccuracy||0)*100)}%`);
-    this.openMiniPanel('📖 Enseigne-moi',`<div class="mini-wrap"><div class="mini-card"><div class="mini-emoji">🎓</div><div class="mini-prompt">Leçon terminée!</div><div class="mini-summary">${m.correct}/${m.total} mots bien corrigés. Précision du Bibit: ${Math.round((this.s.avatarData.eleve.creatureAccuracy||0)*100)}%.</div></div><button class="mini-next" onclick="G.finishMiniPanel()">Continuer</button></div>`);
+    this.openMiniPanel('📖 Bibit est confus',`<div class="mini-wrap"><div class="mini-card"><div class="mini-emoji">🎓</div><div class="mini-prompt">Bibit a compris!</div><div class="mini-summary">Il repart avec un nouveau mot en tête.</div></div></div>`);
     this.SFX.fanfare();
+    setTimeout(()=>this.finishMiniPanel(),950);
   },
   startSagePuzzle(){
     const bank=[
@@ -2401,7 +2498,7 @@ const G = {
     this._busy=true;
     this.moveTo('play',()=>{
       this.wordPop('Réfléchir',88,35);
-      this._mini={type:'sage',total:4,round:0,correct:0,bank:this.shuffle(bank).slice(0,4),locked:false};
+      this._mini={type:'sage',total:1,round:0,correct:0,bank:this.shuffle(bank).slice(0,1),locked:false};
       this.nextSageRound();
     });
   },
@@ -2409,7 +2506,7 @@ const G = {
     const m=this._mini;if(!m)return;
     const q=m.bank[m.round];
     m.round++;m.locked=false;m.question=q;
-    this.openMiniPanel('🦉 Mystère du Sage',`<div class="mini-wrap"><div class="mini-card"><div class="mini-progress">Mystère ${m.round}/${m.total}</div><div class="mini-prompt">${q.prompt}</div><div class="mini-seq">${q.display.map(item=>item?`<span>${item}</span>`:'<span class="mini-missing">?</span>').join('')}</div><div class="mini-sub">${q.odd?'Trouve celui qui ne ressemble pas aux autres.':'Observe le motif puis choisis.'}</div></div><div class="mini-choices">${q.options.map(option=>`<button class="mini-choice" onclick="G.pickSagePuzzle('${option}')">${option}</button>`).join('')}</div></div>`);
+    this.openMiniPanel('🦉 Mystère surprise',`<div class="mini-wrap"><div class="mini-card"><div class="mini-progress">Mystère ${m.round}/${m.total}</div><div class="mini-prompt">${q.prompt}</div><div class="mini-seq">${q.display.map(item=>item?`<span>${item}</span>`:'<span class="mini-missing">?</span>').join('')}</div><div class="mini-sub">${q.odd?'Trouve l intrus pour ouvrir le secret.':'Observe le motif et ouvre le secret.'}</div></div><div class="mini-choices">${q.options.map(option=>`<button class="mini-choice" onclick="G.pickSagePuzzle('${option}')">${option}</button>`).join('')}</div></div>`);
     this.A.say(q.prompt,this.voiceRate());
   },
   pickSagePuzzle(choice){
@@ -2417,7 +2514,7 @@ const G = {
     m.locked=true;
     const hit=choice===m.question.answer;
     if(hit){m.correct++;this.SFX.success();}else this.SFX.fail();
-    this.openMiniPanel('🦉 Mystère du Sage',`<div class="mini-wrap"><div class="mini-card"><div class="mini-emoji">${hit?'🧠':'🌫️'}</div><div class="mini-prompt">${hit?'Bien vu!':'Presque.'}</div><div class="mini-summary">${hit?'Tu as trouvé le bon symbole.':`La bonne réponse était ${m.question.answer}.`}</div></div></div>`);
+    this.openMiniPanel('🦉 Mystère surprise',`<div class="mini-wrap"><div class="mini-card"><div class="mini-emoji">${hit?'🧠':'🌫️'}</div><div class="mini-prompt">${hit?'Secret trouvé!':'Secret révélé!'}</div><div class="mini-summary">${hit?'Le Sage te montre un sourire discret.':`La bonne réponse était ${m.question.answer}.`}</div></div></div>`);
     setTimeout(()=>{if(m.round>=m.total)this.finishSagePuzzle();else this.nextSageRound();},800);
   },
   finishSagePuzzle(){
@@ -2426,8 +2523,9 @@ const G = {
     this.s.avatarData.sage.puzzlesSolved=(this.s.avatarData.sage.puzzlesSolved||0)+m.correct;
     this.earnPoints(10+m.correct*2,'mystère',88,28);this.earnTrait('esprit',2,88,34);this.registerCare();
     this.reportSession('🦉','Mystère du Sage',`${m.correct}/${m.total} énigmes`);
-    this.openMiniPanel('🦉 Mystère du Sage',`<div class="mini-wrap"><div class="mini-card"><div class="mini-emoji">🔮</div><div class="mini-prompt">Mystères résolus!</div><div class="mini-summary">${m.correct}/${m.total} bonnes réponses. Le Sage garde la mémoire de tes énigmes.</div></div><button class="mini-next" onclick="G.finishMiniPanel()">Continuer</button></div>`);
+    this.openMiniPanel('🦉 Mystère surprise',`<div class="mini-wrap"><div class="mini-card"><div class="mini-emoji">🔮</div><div class="mini-prompt">Mystère terminé!</div><div class="mini-summary">Le Sage chuchote un petit merci à Bibit.</div></div></div>`);
     this.SFX.fanfare();
+    setTimeout(()=>this.finishMiniPanel(),950);
   },
   startCoachReading(){
     const bank=this.shuffle([
@@ -2441,7 +2539,7 @@ const G = {
       {before:'La ',word:'tuque',after:' est chaude en hiver.',options:['tuque','couronne','cape']},
       {before:'Le ',word:'lapin',after:' cache une carotte.',options:['lapin','chien','poisson']},
       {before:'Le ',word:'jus',after:' est dans le verre.',options:['jus','miel','riz']},
-    ]).slice(0,4);
+    ]).slice(0,1);
     this._busy=true;
     this.moveTo('play',()=>{
       this.wordPop('Lire',88,35);
@@ -2453,7 +2551,7 @@ const G = {
     const m=this._mini;if(!m)return;
     const q=m.bank[m.round];
     m.round++;m.locked=false;m.question=q;
-    this.openMiniPanel('🌟 Lecture avec Coach',`<div class="mini-wrap"><div class="mini-card"><div class="mini-progress">Lecture ${m.round}/${m.total}</div><div class="mini-prompt">Quel mot complète la phrase?</div><div class="mini-sentence">${q.before}<span class="mini-blank">_____</span>${q.after}</div><div class="mini-sub">Écoute la phrase puis choisis le bon mot.</div></div><div class="mini-choices">${q.options.map(option=>`<button class="mini-choice" onclick="G.pickCoachReading('${option}')">${option}</button>`).join('')}</div><div class="mini-feedback">Série actuelle: ${m.streak}</div></div>`);
+    this.openMiniPanel('🌟 Coup de boost',`<div class="mini-wrap"><div class="mini-card"><div class="mini-progress">Boost ${m.round}/${m.total}</div><div class="mini-prompt">Coach t encourage!</div><div class="mini-sentence">${q.before}<span class="mini-blank">_____</span>${q.after}</div><div class="mini-sub">Trouve le mot et Coach applaudit Bibit.</div></div><div class="mini-choices">${q.options.map(option=>`<button class="mini-choice" onclick="G.pickCoachReading('${option}')">${option}</button>`).join('')}</div><div class="mini-feedback">Série actuelle: ${m.streak}</div></div>`);
     this.A.say(`${q.before}${q.word}${q.after}`,this.voiceRate());
   },
   pickCoachReading(word){
@@ -2462,7 +2560,7 @@ const G = {
     const hit=word===m.question.word;
     if(hit){m.correct++;m.streak++;m.best=Math.max(m.best,m.streak);this.SFX.success();}
     else{m.streak=0;this.SFX.fail();}
-    this.openMiniPanel('🌟 Lecture avec Coach',`<div class="mini-wrap"><div class="mini-card"><div class="mini-emoji">${hit?'📘':'🫶'}</div><div class="mini-prompt">${hit?'Excellent!':'On essaie la suivante.'}</div><div class="mini-summary">${m.question.before}${m.question.word}${m.question.after}</div></div></div>`);
+    this.openMiniPanel('🌟 Coup de boost',`<div class="mini-wrap"><div class="mini-card"><div class="mini-emoji">${hit?'📘':'🫶'}</div><div class="mini-prompt">${hit?'Coach applaudit!':'Coach aide Bibit.'}</div><div class="mini-summary">${m.question.before}${m.question.word}${m.question.after}</div></div></div>`);
     setTimeout(()=>{if(m.round>=m.total)this.finishCoachReading();else this.nextCoachRound();},850);
   },
   finishCoachReading(){
@@ -2472,8 +2570,9 @@ const G = {
     this.s.avatarData.coach.bestReadingStreak=Math.max(this.s.avatarData.coach.bestReadingStreak||0,m.best);
     this.earnPoints(10+m.correct*2,'lecture',88,28);this.earnTrait('force',2,88,34);this.registerCare();
     this.reportSession('🌟','Lecture Coach',`${m.correct}/${m.total} • série ${m.best}`);
-    this.openMiniPanel('🌟 Lecture avec Coach',`<div class="mini-wrap"><div class="mini-card"><div class="mini-emoji">👏</div><div class="mini-prompt">Lecture finie!</div><div class="mini-summary">${m.correct}/${m.total} bonnes réponses. Meilleure série: ${m.best}.</div></div><button class="mini-next" onclick="G.finishMiniPanel()">Continuer</button></div>`);
+    this.openMiniPanel('🌟 Coup de boost',`<div class="mini-wrap"><div class="mini-card"><div class="mini-emoji">👏</div><div class="mini-prompt">Bibit repart fier!</div><div class="mini-summary">Coach lui a donné un petit coup de boost.</div></div></div>`);
     this.SFX.fanfare();
+    setTimeout(()=>this.finishMiniPanel(),950);
   },
   pointPop(text,x=50,y=28){
     const el=document.createElement('div');el.className='point-float';el.style.left=x+'%';el.style.top=y+'%';el.innerHTML=text;
@@ -2541,14 +2640,7 @@ const G = {
   pickOptions(correct,pool,count=3){
     return this.shuffle([correct,...this.shuffle(pool.filter(item=>item.name!==correct.name)).slice(0,count-1)]);
   },
-  playModeForAvatar(){
-    const mech=this.getAvatar().mechanic;
-    if(mech==='race')return this.startWordRace();
-    if(mech==='teach')return this.startTeachingSession();
-    if(mech==='puzzle')return this.startSagePuzzle();
-    if(mech==='coach')return this.startCoachReading();
-    return this.showToyPicker();
-  },
+  playModeForAvatar(){return this.showToyPicker();},
   expRouteForAvatar(){
     const rank=this.lvlRank(this.s.lvl);
     if(this.getAvatar().mechanic==='race')return rank>=1?['count','collect','market','count']:['count','collect','market'];
@@ -2562,6 +2654,7 @@ const G = {
     items.innerHTML=html;
     document.getElementById('spot-backdrop').style.display='block';
     document.getElementById('spot-panel').style.display='flex';
+    this.syncRoomButtons();
   },
   finishMiniPanel(){
     this._mini=null;
@@ -2704,7 +2797,7 @@ const G = {
 
   // ===== ROOM INTERACTIONS =====
   goSpot(spot){
-    if(this._busy)return;
+    if(this._busy){this.showBusyHint();return;}
     const tutorial=this.currentTutorialStep();
     if(this.tutorialActive()&&tutorial&&spot!==tutorial.spot){this.showToast('👆','Suis la flèche jaune');return;}
     switch(spot){
@@ -2743,8 +2836,8 @@ const G = {
         dim.onclick=wake;setTimeout(()=>{if(dim.classList.contains('show'))wake();},3500);
         return;
       }
-      dim.onclick=null;
-      setTimeout(()=>this.startBedtimeStory(reward),650);
+      dim.onclick=()=>this.sleepNow();
+      setTimeout(()=>this.showSleepChoice(reward),520);
     });
   },
 
@@ -2807,15 +2900,19 @@ const G = {
   // --- TOY PICKER ---
   showToyPicker(){
     const toys=this.s.inv.filter(i=>i.cat==='toy');
-    if(!toys.length){this._spotMode='';this.showBubble('Pas de jouets!','sad');return;}
+    const special=this.avatarPlayCard();
+    if(!toys.length&&!special){this._spotMode='';this.showBubble('Pas de jouets!','sad');return;}
     this._spotMode='toy';
     const groups={};toys.forEach(t=>{if(!groups[t.name])groups[t.name]={...t,count:0};groups[t.name].count++;});
-    document.getElementById('sp-title').textContent='🧸 Jouer';
-    document.getElementById('sp-items').innerHTML=Object.values(groups).sort((a,b)=>this.lvlRank(a.lvl)-this.lvlRank(b.lvl)).map(t=>
+    document.getElementById('sp-title').textContent='🧸 Jouer ensemble';
+    const toyCards=Object.values(groups).sort((a,b)=>this.lvlRank(a.lvl)-this.lvlRank(b.lvl)).map(t=>
       `<div class="sp-item" onclick="G.pickToy('${t.name.replace(/'/g,"\\'")}','${t.emoji}')"><span class="sp-icon">${t.emoji}</span><span class="sp-name">${t.name}</span><span class="sp-sub">${(t.desc||'').split('.')[0]}</span><span class="sp-count">×${t.count}</span></div>`
     ).join('');
+    const specialCard=special?`<div class="sp-item sp-special" onclick="G.launchAvatarPlay()"><span class="sp-icon">${special.icon}</span><span class="sp-name">${special.title}</span><span class="sp-sub">${special.desc}</span></div>`:'';
+    document.getElementById('sp-items').innerHTML=specialCard+toyCards;
     document.getElementById('spot-backdrop').style.display='block';
     document.getElementById('spot-panel').style.display='flex';
+    this.syncRoomButtons();
   },
   pickToy(name,emoji){
     const reward=this.calcServiceReward('joie',10);
@@ -2875,13 +2972,22 @@ const G = {
     document.getElementById('spot-backdrop').style.display='none';
     document.getElementById('spot-panel').style.display='none';
     document.getElementById('sp-items').classList.remove('wardrobe');
+    if(this._spotMode==='sleep-choice'){
+      const reward=this._sleepReward;
+      this._spotMode='';this._sleepReward=null;
+      this.syncRoomButtons();
+      this.finishSleepReward(reward);
+      return;
+    }
     if(this._spotMode==='wardrobe'||this._spotMode==='mini'){
       this._spotMode='';
       this._mini=null;
-      this.moveTo('center',()=>{this._busy=false;});
+      this.syncRoomButtons();
+      this.moveTo('center',()=>{this._busy=false;this.syncRoomButtons();});
       return;
     }
     this._spotMode='';
+    this.syncRoomButtons();
   },
 
   // ===== POTTY SYSTEM =====
@@ -3083,8 +3189,8 @@ const G = {
   // ===== EXPEDITIONS =====
   exp:{step:0,total:3,current:1,bag:[],route:['collect','map','market']},
   goExped(){
-    if(this._busy)return;
-    if(this.tutorialActive()){this.showToast('🫧','Finis le petit guide d abord');return;}
+    const reason=this.expeditionBlockReason();
+    if(reason){this.showToast('🗺️',reason);return;}
     if(this.s.potty.phase&&this.s.potty.phase!=='success'&&this.s.potty.phase!=='fail'){
       clearTimeout(this._pottyPhaseT);this.s.potty.phase=null;
       document.getElementById('spot-potty').classList.remove('urgent');document.getElementById('care').classList.remove('potty-alert');}
@@ -3092,11 +3198,12 @@ const G = {
       document.getElementById('room').querySelectorAll('.ev-target').forEach(t=>t.remove());}
     clearTimeout(this._eventT);
     const route=this.expRouteForAvatar();
+    this._expedLaunching=true;this.syncRoomButtons();
     this.exp={step:0,total:route.length,current:1,bag:[],route};
-    this._busy=false;this.sw('exped');this.updateExpMeta('🌿 Expédition');
-    setTimeout(()=>this.nextStep(),300);
+    this.sw('exped');this.updateExpMeta('🌿 Expédition');
+    setTimeout(()=>{this._expedLaunching=false;this.nextStep();},300);
   },
-  exitExped(){this._countRace=null;this.sw('care');this.updateBB();this.updateNeeds();this.schedulePotty(15000);this.scheduleEvent(20000);this.save();},
+  exitExped(){this._countRace=null;this._expedLaunching=false;this.sw('care');this.updateBB();this.updateNeeds();this.schedulePotty(15000);this.scheduleEvent(20000);this.syncRoomButtons();this.save();},
   nextStep(){
     if(this.exp.step>=this.exp.total){this.finishExp();return;}
     const g=this.exp.route[this.exp.step];
@@ -3235,7 +3342,6 @@ if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostnam
 }
 document.getElementById('dash-ov').addEventListener('click',e=>{if(e.target.id==='dash-ov')G.closeDashboard();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')G.closeDashboard();});
-document.addEventListener('touchend',e=>{if(e.target.closest('button,.mcell,.mitm,.bw,.sp-item,.nd,.bb,.furn,.exp-btn,.slw,.mi-name,.ev-target,.toast,.spot-backdrop,.collect-item,.collect-btn,.dash-ov,.story-ov,.story-choice,.story-next,.story-skip'))e.preventDefault();},{passive:false});
 </script>
 </body>
 </html>
